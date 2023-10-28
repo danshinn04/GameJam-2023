@@ -15,6 +15,7 @@ public class PlayerScript : MonoBehaviour
     private float pistolCoolDown = 0.0f;
 
     // shotgunCoolDown
+    private float shotgunCoolDown = 0.0f;
 
     // automaticCoolDown
     private float automaticCoolDown = 0.0f;
@@ -58,6 +59,22 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    void shootShotgun() {
+        if(shotgunCoolDown == 0.0f) {
+            // mouseCoolDown
+            shotgunCoolDown = 0.10f;
+
+
+            for(int i = -1; i < 1; i++) {
+                Vector3 bDir = Quaternion.AngleAxis((float) i * 100.0f, Vector3.up) * cVector;
+
+                GameObject projectile = Instantiate(bullet, transform.position, transform.rotation);
+                projectile.GetComponent<BulletScript>().direction = bDir;
+                projectile.GetComponent<BulletScript>().speed = 12.0f;
+            }
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -81,11 +98,14 @@ public class PlayerScript : MonoBehaviour
         }
 
         rotatePlayer();
-        if(Input.GetMouseButtonDown(0) && gunType == 0) {
+        if(gunType == 0 && Input.GetMouseButtonDown(0)) {
             shootPistol();
         }
         if(gunType == 1 && Input.GetMouseButton(0)) {
             shootAuto();
+        }
+        if(gunType == 2 && Input.GetMouseButtonDown(0)) {
+            shootShotgun();
         }
 
         Vector2 change = new Vector2(h, v).normalized;
@@ -96,6 +116,9 @@ public class PlayerScript : MonoBehaviour
         }
         if(automaticCoolDown > 0.0f) {
             automaticCoolDown = Mathf.Max(automaticCoolDown - Time.deltaTime, 0.0f);
+        }
+        if(shotgunCoolDown > 0.0f) {
+            shotgunCoolDown = Mathf.Max(shotgunCoolDown - Time.deltaTime, 0.0f);
         }
     }
 }

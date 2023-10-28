@@ -46,6 +46,7 @@ public class EnemyScript : MonoBehaviour
             if(deathSequence == 0.0f) {
                 Destroy(GetComponent<Rigidbody2D>());
                 Destroy(GetComponent<CircleCollider2D>());
+                GameManager.enemies.Remove(gameObject);
                 deathSequence = 0.4f;
             }
             if(deathSequence > 0.0f) {
