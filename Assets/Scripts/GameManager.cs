@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public static float Py;
 
     public TMP_Text roundText;
+    public TMP_Text enemiesText;
     
     private int _roundNum = 1;
 
@@ -207,6 +208,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        enemiesText.text = "Enemies left: " + EnemyList.Count;
         GenerateRound();
     }
 
@@ -214,6 +216,7 @@ public class GameManager : MonoBehaviour
     {
         if (EnemyList.Count > 0)
         {
+            enemiesText.text = "Enemies left: " + EnemyList.Count;
             return;
         }
 

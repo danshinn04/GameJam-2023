@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using TMPro;
 
 public enum Gun
 {
@@ -17,6 +18,8 @@ public class PlayerScript : MonoBehaviour
     public GameObject bullet;
     public GameObject pellet;
     public Rigidbody2D rb;
+
+    public TMP_Text healthText;
     
     public Animator anim;
     private static readonly int CurrGun = Animator.StringToHash("CurrGun");
@@ -87,10 +90,16 @@ public class PlayerScript : MonoBehaviour
     
     public void takeDamage(float f) {
         health -= f;
+        healthText.text = "HP " + health;
     }
 
     float getHealth() {
         return health;
+    }
+
+    private void Start()
+    {
+        healthText.text = "HP " + health;
     }
 
     private void Update()
