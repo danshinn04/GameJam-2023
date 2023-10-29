@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -14,6 +15,8 @@ public class GameManager : MonoBehaviour
 
     public static float Px;
     public static float Py;
+
+    public TMP_Text roundText;
     
     private int _roundNum = 1;
 
@@ -174,8 +177,8 @@ public class GameManager : MonoBehaviour
 
     private void GenerateRound()
     {
-        Debug.Log("Round " + _roundNum);
-
+        roundText.text = "Round " + _roundNum;
+        
         CurrentMap = GenerateFullMap(5, 3);
         tilemap.ClearAllTiles();
         MapToTile();
