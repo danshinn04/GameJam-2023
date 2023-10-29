@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
+    private float health = 100.0f;
     private float speed = 5.0f;
     Vector3 cVector;
     public GameObject bullet;
@@ -26,6 +27,13 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         cVector = new Vector3(0, 0, 0);
+        
+        float n = GameManager.CurrentMap[0].Length;
+        float m = GameManager.CurrentMap.Length;
+
+        // unity raycasting sucks ass
+        GameManager.Px = (transform.position.x + transform.localScale.x / 2.0f + (n / 2.0f));
+        GameManager.Py = (transform.position.y + transform.localScale.y / 2.0f + (m / 2.0f));
     }
 
     // shotgun, weapon
@@ -82,7 +90,17 @@ public class PlayerScript : MonoBehaviour
         }
     }
 
+    
+    public void takeDamage(float f) {
+        health -= f;
+    }
+
+    float getHealth() {
+        return health;
+    }
+
     // Update is called once per frame
+
     void Update()
     {
         float h = 0;

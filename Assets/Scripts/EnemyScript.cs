@@ -4,20 +4,28 @@ using UnityEngine;
 
 public class EnemyScript : MonoBehaviour
 {
-    private Vector2 direction;
+    private Vector3 dir;
+    private Vector3 goal;
     private Rigidbody2D rb;
     private GameObject player;
+    public GameObject block;
     private Color ogColor;
 
     private float health = 100.0f;
-    private float speed = 4.0f;
-
+    private float speed = 6.0f;
     private bool chase = false;
+    private bool idle = false;
 
     // hitDamage
     private float hitDamage = 0.0f;
     private float deathSequence = 0.0f;
     private float attention = 0.0f;
+    private float wander = 0.0f;
+    private float explodeTimer = 0.0f;
+
+    private List<(int, int)> path = null;
+    private int nx = 0;
+    private int ny = 0;
 
     // layerMask
     public LayerMask Ignore;
@@ -28,6 +36,7 @@ public class EnemyScript : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
         ogColor = GetComponent<SpriteRenderer>().color;
+        idle = true;
     }
 
     public void takeDamage(float damage) {
@@ -35,42 +44,119 @@ public class EnemyScript : MonoBehaviour
         hitDamage = 0.1f;
     }
 
+    bool IsValidMove(int[][] maze, int y, int x, HashSet<(int, int)> visited)
+    {
+        return (y >= 0 && y < maze.Length) && (x >= 0 && x < maze[0].Length) && (maze[y][x] == 0) && !visited.Contains((y, x));
+    }
+    
+    List<(int, int)> MazeSolver(int[][] maze, (int, int) start, (int, int) end) {
+        // Directions for moving up, down, left, and right
+        
+        float n = GameManager.CurrentMap[0].Length;
+        float m = GameManager.CurrentMap.Length;
+
+        int[][] directions = { new int[] { -1, 0 }, new int[] { 1, 0 }, new int[] { 0, -1 }, new int[] { 0, 1 } };
+
+        Queue<(int, int)> queue = new Queue<(int, int)>();
+        HashSet<(int, int)> visited = new HashSet<(int, int)>();
+        Dictionary<(int, int), (int, int)> previous = new Dictionary<(int, int), (int, int)>();
+
+        queue.Enqueue(start);
+        visited.Add(start);
+        previous[start] = (0, 0);
+
+        while (queue.Count > 0)
+        {
+            (int currY, int currX) = queue.Dequeue();
+
+            // If we've reached the destination
+            if ((currY, currX) == end)
+            {
+                Debug.Log("solved");
+                List<(int, int)> path = new List<(int, int)>();
+                while ((currY, currX) != start)
+                {
+                    //Instantiate(block, new Vector3(currX - (n / 2.0f), currY - (m / 2.0f), 0.0f), Quaternion.identity);
+                    path.Add((currY, currX));
+                    (currY, currX) = previous[(currY, currX)];
+                }
+                path.Add(start);
+                path.Reverse();
+                return path;
+            }
+
+            foreach (int[] direction in directions)
+            {
+                int newY = currY + direction[0];
+                int newX = currX + direction[1];
+                if (IsValidMove(maze, newY, newX, visited))
+                {
+                    Debug.Log(maze[newY][newX]);
+                    queue.Enqueue((newY, newX));
+                    visited.Add((newY, newX));
+                    previous[(newY, newX)] = (currY, currX);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public void sentry() {
         chase = false;
-        rb.velocity = new Vector2(0.0f, 0.0f);
 
         float n = GameManager.CurrentMap[0].Length;
         float m = GameManager.CurrentMap.Length;
 
-        if(GameManager.Px >= 0 && GameManager.Px < n && GameManager.Py >= 0 && GameManager.Py < n) {
+        if(GameManager.Px >= 0 && GameManager.Px < n && GameManager.Py >= 0 && GameManager.Py < m) {
             int x = (int)GameManager.Px;
             int y = (int)GameManager.Py;
 
-            Debug.Log("Player x, Player y: " + x + "," + y);
-
             Vector3 target = player.transform.position - transform.position;
 
-            for(float i = 0; i < target.magnitude; i += 0.1f) {
-                Vector3 epos = transform.position + target.normalized * i;
-                int ex = (int)(epos.x + (n / 2.0f));
-                int ey = (int)(epos.y + (m / 2.0f));
-
+            if(target.magnitude < 7.0f || path != null) {
+                int ex = (int)(transform.position.x + (n / 2.0f));
+                int ey = (int)(transform.position.y + (m / 2.0f));
+                
                 if(ex < 0 || ex >= n || ey < 0 || ey >= m) {
                     return;
                 }
 
-                if(GameManager.CurrentMap[ey][ex] == 1) {
-                    Debug.Log("Hitting a wall");
-                    return;
-                }
-                if(ey == y && ex == x) {
-                    Debug.Log("Player in sight");
-                    chase = true;
-                    attention = 1.0f;
-                    return;
-                }
-            }
+                if(path != null && path.Count > 0) {
+                    if((goal - transform.position).magnitude < 1.2f) {
+                        path.RemoveAt(0);
+                        (ny, nx) = path[0];
+                        
+                        goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                        dir = goal - transform.position;
+                    }
+                } else {
+                    path = MazeSolver(GameManager.CurrentMap, (ey, ex), (y, x));
+                    path.RemoveAt(0);
+                    (ny, nx) = path[0];
 
+                    goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                    dir = goal - transform.position;
+                
+                }
+            
+                if(target.magnitude < 2.0f) {
+                    if(explodeTimer < 0.0f) {
+                        health = 0.0f;
+                        player.GetComponent<PlayerScript>().takeDamage(20.0f);
+                        return;
+                    }
+                    if(explodeTimer == 0.0f) {
+                        explodeTimer = 1.0f;
+                    }
+                    explodeTimer -= Time.deltaTime;
+                    return;
+                }
+
+                explodeTimer = 0.0f;
+            }
+            
+            transform.position += dir.normalized * speed * Time.deltaTime;
         }
     }
 
@@ -82,7 +168,7 @@ public class EnemyScript : MonoBehaviour
             hitDamage = Mathf.Max(0.0f, hitDamage - Time.deltaTime);
             GetComponent<SpriteRenderer>().color = Color.black;
         }
-        if(health < 0.0f) {
+        if(health <= 0.0f) {
             if(deathSequence == 0.0f) {
                 Destroy(GetComponent<Rigidbody2D>());
                 Destroy(GetComponent<CircleCollider2D>());
@@ -105,12 +191,48 @@ public class EnemyScript : MonoBehaviour
 
         sentry();
 
+        /*
         if(chase || attention > 0.0f) {
             Vector3 target = player.transform.position - transform.position;
             float angle = Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg - 90.0f;
             transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
             rb.velocity = target.normalized * speed;
             attention = Mathf.Max(0.0f, attention - Time.deltaTime);
+
+            if(target.magnitude < 2.0f) {
+                if(explodeTimer < 0.0f) {
+                    health = 0.0f;
+                    player.GetComponent<PlayerScript>().takeDamage(20.0f);
+                    return;
+                }
+                if(explodeTimer == 0.0f) {
+                    explodeTimer = 1.0f;
+                }
+                explodeTimer -= Time.deltaTime;
+                return;
+            }
+
+            explodeTimer = 0.0f;
+        }*/
+        /*
+        if(!idle && !chase && attention == 0.0f) {
+            idle = true;
         }
+        if(idle) {
+            if(Random.Range(0.0f, 10.0f) < 0.01f && wander == 0.0f) {
+                direction = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90.0f;
+                transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+                wander = 2.5f;
+            }
+            if(wander > 0.0f) {
+                wander = Mathf.Max(0.0f, wander - Time.deltaTime);
+                
+                Debug.Log(direction);
+                Debug.Log(rb.velocity);
+
+                rb.velocity = direction * speed;
+            }
+        }*/
     }
 }

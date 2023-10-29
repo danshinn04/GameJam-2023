@@ -166,7 +166,7 @@ public class GameManager : MonoBehaviour
             {
                 if (CurrentMap[y][x] == 1)
                 {
-                    tilemap.SetTile(new Vector3Int(x + offset.x, y + offset.y, 0), ruleTile);
+                    tilemap.SetTile(new Vector3Int(x + offset.x - 1, y + offset.y - 1, 0), ruleTile);
                 }
             }
         }
@@ -180,10 +180,21 @@ public class GameManager : MonoBehaviour
         tilemap.ClearAllTiles();
         MapToTile();
 
-        for (var i = 0; i < _roundNum; i++)
+        for (var i = 0; i < Mathf.Min(10, _roundNum); i++)
         {
-            var enemy = Instantiate(normalEnemy, new Vector3(Random.Range(-5.0f, 5.0f),
-                Random.Range(-5.0f, 5.0f), 0.0f), Quaternion.identity);
+            int y = Random.Range(1, CurrentMap.Length - 1);
+            int x = Random.Range(1, CurrentMap[0].Length - 1);
+
+            while(CurrentMap[y][x] == 1 || (Mathf.Abs(Py - (float)(y)) < 7.0f && Mathf.Abs(Px - (float)(x)) < 7.0f))
+            {
+                y = Random.Range(1, CurrentMap.Length - 1);
+                x = Random.Range(1, CurrentMap[0].Length - 1);
+            }
+
+            float ey = (float) y - (CurrentMap.Length / 2.0f);
+            float ex = (float) x - (CurrentMap[0].Length / 2.0f);
+
+            var enemy = Instantiate(normalEnemy, new Vector3(ex, ey, 0.0f), Quaternion.identity);
             
             EnemyList.Add(enemy);
         }

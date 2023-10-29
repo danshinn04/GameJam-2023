@@ -57,7 +57,7 @@ public class GenMapScript : MonoBehaviour
             {
                 if (_q1[y, x] == 1)
                 {
-                    tilemap.SetTile(new Vector3Int(x + offset.x, y + offset.y, 0), ruleTile);
+                    tilemap.SetTile(new Vector3Int(x, y, 0), ruleTile);
                 }
             }
         }
