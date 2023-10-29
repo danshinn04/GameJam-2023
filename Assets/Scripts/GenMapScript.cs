@@ -6,30 +6,56 @@ public class GenMapScript : MonoBehaviour
     public Tilemap tilemap;
     public TileBase ruleTile;
 
-    private readonly int[,] _map =
+    private readonly int[,] _q1 =
     {
         { 1, 1, 1, 1, 1 },
         { 1, 0, 1, 0, 1 },
+        { 1, 0, 1, 0, 1 },
+        { 1, 0, 0, 0, 1 },
+        { 1, 1, 1, 1, 1 },
+    };
+    
+    private readonly int[,] _q2 =
+    {
+        { 1, 1, 1, 1, 1 },
         { 1, 0, 0, 0, 1 },
         { 1, 0, 1, 0, 1 },
+        { 1, 0, 0, 0, 1 },
         { 1, 1, 1, 1, 1 },
-        { 1, 1, 1, 1, 1 }
+    };
+    
+    private readonly int[,] _q3 =
+    {
+        { 1, 1, 1, 1, 1 },
+        { 1, 0, 0, 0, 1 },
+        { 1, 0, 1, 0, 1 },
+        { 1, 0, 1, 0, 1 },
+        { 1, 1, 1, 1, 1 },
+    };
+    
+    private readonly int[,] _q4 =
+    {
+        { 1, 1, 1, 1, 1 },
+        { 1, 0, 0, 0, 1 },
+        { 1, 1, 1, 0, 1 },
+        { 1, 0, 0, 0, 1 },
+        { 1, 1, 1, 1, 1 },
     };
 
-    private void GenMap()
+    private void RenderMap()
     {
         tilemap.ClearAllTiles();
         
-        var width = _map.GetLength(1);
-        var height = _map.GetLength(0);
+        var width = _q1.GetLength(1);
+        var height = _q1.GetLength(0);
         
         Vector2Int offset = new(-Mathf.FloorToInt(width / 2f), -Mathf.FloorToInt(height / 2f));
         
-        for (var y = 0; y < _map.GetLength(0); y++)
+        for (var y = 0; y < _q1.GetLength(0); y++)
         {
-            for (var x = 0; x < _map.GetLength(1); x++)
+            for (var x = 0; x < _q1.GetLength(1); x++)
             {
-                if (_map[y, x] == 1)
+                if (_q1[y, x] == 1)
                 {
                     tilemap.SetTile(new Vector3Int(x + offset.x, y + offset.y, 0), ruleTile);
                 }
@@ -39,6 +65,6 @@ public class GenMapScript : MonoBehaviour
 
     private void Start()
     {
-        GenMap();
+        RenderMap();
     }
 }
