@@ -33,6 +33,9 @@ public class PlayerScript : MonoBehaviour
     public Sprite pistolSprite;
     public Sprite autoSprite;
     public Sprite shotgunSprite;
+
+    private float hitDamage;
+    private Color ogColor;
     
     private const float Speed = 5.0f;
     private Gun _gun = Gun.Pistol;
@@ -98,6 +101,7 @@ public class PlayerScript : MonoBehaviour
     
     public void takeDamage(float f) {
         health -= f;
+        hitDamage = 0.25f;
         healthText.text = "HP " + health;
     }
 
@@ -110,10 +114,20 @@ public class PlayerScript : MonoBehaviour
         healthText.text = "HP " + health;
         currGunText.text = "Pistol";
         currGunImage.sprite = pistolSprite;
+
+        ogColor = GetComponent<SpriteRenderer>().color;
     }
 
     private void Update()
     {
+        if (hitDamage != 0f)
+        {
+            hitDamage = Mathf.Max(0.0f, hitDamage - Time.deltaTime);
+
+            Color dmg = Color.Lerp(ogColor, Color.red, hitDamage / 0.25f);
+            GetComponent<SpriteRenderer>().color = dmg;
+        }
+        
         float h = 0;
         float v = 0;
 
