@@ -12,7 +12,7 @@ public class EnemyScript : MonoBehaviour
     private Color _ogColor;
 
     private float _health = 100.0f;
-    private float _speed = 6.0f;
+    private float _speed = 5.5f;
     private bool _chase;
     private bool _idle;
 

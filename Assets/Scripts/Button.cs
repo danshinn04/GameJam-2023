@@ -7,6 +7,11 @@ public class Button : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
     }
 
+    public void MainMenu()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+    }
+
     public void Quit()
     {
         Application.Quit();

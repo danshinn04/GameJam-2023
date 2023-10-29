@@ -35,6 +35,8 @@ public class PlayerScript : MonoBehaviour
     public Sprite autoSprite;
     public Sprite shotgunSprite;
 
+    public GameObject gameOver;
+
     private float hitDamage;
     private Color ogColor;
     
@@ -198,6 +200,8 @@ public class PlayerScript : MonoBehaviour
     {
         if (health <= 0.0f)
         {
+            gameOver.SetActive(true);
+            
             Destroy(gameObject);
             return;
         }
