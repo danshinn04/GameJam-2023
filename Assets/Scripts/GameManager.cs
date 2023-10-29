@@ -17,8 +17,11 @@ public class GameManager : MonoBehaviour
     public static float Px;
     public static float Py;
 
+    public TMP_Text bigRoundText;
     public TMP_Text roundText;
     public TMP_Text enemiesText;
+
+    private float roundStartTime;
     
     private int _roundNum = 1;
 
@@ -180,6 +183,7 @@ public class GameManager : MonoBehaviour
     private void GenerateRound()
     {
         roundText.text = "Round " + _roundNum;
+        bigRoundText.text = _roundNum.ToString();
         
         CurrentMap = GenerateFullMap(5, 3);
         tilemap.ClearAllTiles();
@@ -205,6 +209,7 @@ public class GameManager : MonoBehaviour
         }
         
         _roundNum++;
+        roundStartTime = 1f;
     }
 
     private void Start()
@@ -215,6 +220,14 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (roundStartTime != 0f) 
+        {
+            roundStartTime = Mathf.Max(0.0f, roundStartTime - Time.deltaTime);
+            Color textCol = bigRoundText.color;
+            textCol.a = roundStartTime / 1f;
+            bigRoundText.color = textCol;
+        }
+        
         if (EnemyList.Count > 0)
         {
             enemiesText.text = "Enemies left: " + EnemyList.Count;
