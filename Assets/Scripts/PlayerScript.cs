@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
@@ -8,17 +6,20 @@ public class PlayerScript : MonoBehaviour
     Vector3 cVector;
     public GameObject bullet;
     public Rigidbody2D rb;
+
+    public Animator anim;
+    private static readonly int IsShooting = Animator.StringToHash("isShooting");
     
     private int gunType = 1;
 
     // pistolCoolDown
-    private float pistolCoolDown = 0.0f;
+    private float pistolCoolDown;
 
     // shotgunCoolDown
-    private float shotgunCoolDown = 0.0f;
+    private float shotgunCoolDown;
 
     // automaticCoolDown
-    private float automaticCoolDown = 0.0f;
+    private float automaticCoolDown;
 
     // Start is called before the first frame update
     void Start()
@@ -43,7 +44,7 @@ public class PlayerScript : MonoBehaviour
         if(pistolCoolDown == 0.0f) {
             // mouseCoolDown
             pistolCoolDown = 0.05f;
-            GameObject projectile = Instantiate(bullet, transform.position, transform.rotation);
+            GameObject projectile = Instantiate(bullet, transform.position + (0.5f * cVector.normalized), transform.rotation);
             projectile.GetComponent<BulletScript>().direction = cVector;
             projectile.GetComponent<BulletScript>().speed = 12.0f;
         }
@@ -53,7 +54,7 @@ public class PlayerScript : MonoBehaviour
         if(automaticCoolDown == 0.0f) {
             // mouseCoolDown
             automaticCoolDown = 0.10f;
-            GameObject projectile = Instantiate(bullet, transform.position, transform.rotation);
+            GameObject projectile = Instantiate(bullet, transform.position + (0.5f * cVector.normalized), transform.rotation);
             projectile.GetComponent<BulletScript>().direction = cVector;
             projectile.GetComponent<BulletScript>().speed = 12.0f;
         }
@@ -98,14 +99,24 @@ public class PlayerScript : MonoBehaviour
         }
 
         rotatePlayer();
-        if(gunType == 0 && Input.GetMouseButtonDown(0)) {
-            shootPistol();
-        }
-        if(gunType == 1 && Input.GetMouseButton(0)) {
-            shootAuto();
-        }
-        if(gunType == 2 && Input.GetMouseButtonDown(0)) {
-            shootShotgun();
+        
+        switch (gunType)
+        {
+            case 0 when Input.GetMouseButtonDown(0):
+                shootPistol();
+                anim.SetBool(IsShooting, true);
+                break;
+            case 1 when Input.GetMouseButton(0):
+                shootAuto();
+                anim.SetBool(IsShooting, true);
+                break;
+            case 2 when Input.GetMouseButtonDown(0):
+                shootShotgun();
+                anim.SetBool(IsShooting, true);
+                break;
+            default:
+                anim.SetBool(IsShooting, false);
+                break;
         }
 
         Vector2 change = new Vector2(h, v).normalized;
