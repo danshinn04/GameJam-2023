@@ -18,11 +18,22 @@ public class GameManager : MonoBehaviour
     
     private readonly int[,] _map =
     {
-        { 1, 1, 1, 1, 1 },
-        { 1, 0, 1, 0, 1 },
-        { 1, 0, 1, 0, 1 },
-        { 1, 0, 0, 0, 1 },
-        { 1, 1, 1, 1, 1 },
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
     };
     
     private void MapToTile()
@@ -51,10 +62,13 @@ public class GameManager : MonoBehaviour
 
         tilemap.ClearAllTiles();
         MapToTile();
+
+        float width = (float)_map.GetLength(1) / 2.0f - 1.0f;
+        float height = (float)_map.GetLength(0) / 2.0f - 1.0f;
         
         for(int i = 0; i < rounds; i++) {
-            GameObject enemy = Instantiate(normalEnemy, new Vector3(Random.Range(-5.0f, 5.0f), 
-                                            Random.Range(-5.0f, 5.0f), 0.0f), Quaternion.identity) as GameObject;
+            GameObject enemy = Instantiate(normalEnemy, new Vector3(Random.Range(-width, width), 
+                                            Random.Range(-height, height), 0.0f), Quaternion.identity) as GameObject;
             enemies.Add(enemy);
         }
     }
