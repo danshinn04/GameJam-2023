@@ -17,7 +17,8 @@ public class GameManager : MonoBehaviour
     private Vector2Int end = new Vector2Int(3, 3);    
     private List<Vector2Int> solutionPath;
     
-    private int[][] currentMap;
+    private int[][] currentMap; //a
+    
     int getRounds() {
         return rounds;
     }
