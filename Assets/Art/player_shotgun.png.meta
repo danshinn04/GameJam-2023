@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fc9cf34a6ee395447bbeaa9b36cf8c24
+guid: 6bc35175d8f98b3459cc07098f2ea159
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -105,7 +105,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: player_rifle_0
+      name: player_shotgun_0
       rect:
         serializedVersion: 2
         x: 0
@@ -119,14 +119,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 40aa2c0c02979254c8037a277d16d1c9
-      internalID: -1073803457
+      spriteID: be1b6fd1bac28d34589207e08212bdd8
+      internalID: -784083691
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_rifle_1
+      name: player_shotgun_1
       rect:
         serializedVersion: 2
         x: 36
@@ -140,14 +140,35 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 89f36f54d38977b4097eb81f50865d7c
-      internalID: -839259368
+      spriteID: 70ec9ad9a5d88a34dbcf2d9b35ccf333
+      internalID: -1566509661
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_rifle_2
+      name: player_shotgun_2
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 72
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 986785b022524a04489b76d332efd2ae
+      internalID: 1967016448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_shotgun_3
       rect:
         serializedVersion: 2
         x: 0
@@ -161,14 +182,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7da6052fd2a4f514ca160d4d5c418643
-      internalID: 1796678783
+      spriteID: 991ef163a85d9df4798c78e26d253489
+      internalID: -396651694
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_rifle_3
+      name: player_shotgun_4
       rect:
         serializedVersion: 2
         x: 36
@@ -182,14 +203,35 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 55e124660543e1148b098d4e5c51d65c
-      internalID: -1764900748
+      spriteID: c92fb599024014e45892328221b58a73
+      internalID: 336790935
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: player_rifle_4
+      name: player_shotgun_5
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 36
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9f33d2ef68349bb48bd2054123a00ec6
+      internalID: 983433665
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_shotgun_6
       rect:
         serializedVersion: 2
         x: 0
@@ -203,8 +245,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 8ffb4e236e03c8b49bcd1f3bb2fccb22
-      internalID: -1643718408
+      spriteID: afd7e40c601faaf4a8b38737b7a56a95
+      internalID: -201558355
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: player_shotgun_7
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 0
+        width: 36
+        height: 36
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f0836645508082e48b9590fbb0d426b7
+      internalID: -1269074763
       vertices: []
       indices: 
       edges: []
@@ -220,11 +283,14 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      player_rifle_0: -1073803457
-      player_rifle_1: -839259368
-      player_rifle_2: 1796678783
-      player_rifle_3: -1764900748
-      player_rifle_4: -1643718408
+      player_shotgun_0: -784083691
+      player_shotgun_1: -1566509661
+      player_shotgun_2: 1967016448
+      player_shotgun_3: -396651694
+      player_shotgun_4: 336790935
+      player_shotgun_5: 983433665
+      player_shotgun_6: -201558355
+      player_shotgun_7: -1269074763
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

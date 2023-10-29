@@ -470,10 +470,10 @@ GameObject:
   m_Component:
   - component: {fileID: 920441897}
   - component: {fileID: 920441896}
+  - component: {fileID: 920441895}
+  - component: {fileID: 920441901}
   - component: {fileID: 920441899}
   - component: {fileID: 920441900}
-  - component: {fileID: 920441901}
-  - component: {fileID: 920441895}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -538,7 +538,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: -1073803457, guid: fc9cf34a6ee395447bbeaa9b36cf8c24, type: 3}
+  m_Sprite: {fileID: -14797348, guid: 372d8873027e6734ab3f6e39ccaaaaaa, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

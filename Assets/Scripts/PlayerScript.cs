@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum Gun
 {
@@ -14,7 +16,9 @@ public class PlayerScript : MonoBehaviour
     public Rigidbody2D rb;
     
     public Animator anim;
-    private static readonly int IsShooting = Animator.StringToHash("isShooting");
+    private static readonly int CurrGun = Animator.StringToHash("CurrGun");
+    private static readonly int MouseHeldDown = Animator.StringToHash("MouseHeldDown");
+    private static readonly int MouseClicked = Animator.StringToHash("MouseClicked");
     
     private const float Speed = 5.0f;
     private Gun _gun = Gun.Pistol;
@@ -36,6 +40,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (_pistolCooldown != 0.0f) return;
         
+        anim.SetTrigger(MouseClicked);
         _pistolCooldown = 0.05f;
         
         var projectile = Instantiate(bullet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
@@ -47,6 +52,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (_automaticCooldown != 0.0f) return;
         
+        anim.SetBool(MouseHeldDown, true);
         _automaticCooldown = 0.10f;
         
         var projectile = Instantiate(bullet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
@@ -58,6 +64,7 @@ public class PlayerScript : MonoBehaviour
     {
         if (_shotgunCooldown != 0.0f) return;
         
+        anim.SetTrigger(MouseClicked);
         _shotgunCooldown = 0.65f;
         var pellets = 4;
         
@@ -96,35 +103,49 @@ public class PlayerScript : MonoBehaviour
         if (Input.GetKey(KeyCode.Alpha1))
         {
             _gun = Gun.Pistol;
+            anim.SetInteger(CurrGun, 0);
         }
         if (Input.GetKey(KeyCode.Alpha2))
         {
             _gun = Gun.Automatic;
+            anim.SetInteger(CurrGun, 1);
         }
         if (Input.GetKey(KeyCode.Alpha3))
         {
             _gun = Gun.Shotgun;
+            anim.SetInteger(CurrGun, 2);
         }
 
         RotatePlayer();
-        
-        switch (_gun)
+
+        if (Input.GetMouseButtonDown(0))
         {
-            case Gun.Pistol when Input.GetMouseButtonDown(0):
-                ShootPistol();
-                anim.SetBool(IsShooting, true);
-                break;
-            case Gun.Automatic when Input.GetMouseButton(0):
+            switch (_gun)
+            {
+                case Gun.Pistol:
+                    ShootPistol();
+                    break;
+                case Gun.Shotgun:
+                    ShootShotgun();
+                    break;
+                case Gun.Automatic:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        if (Input.GetMouseButton(0))
+        {
+            if (_gun == Gun.Automatic)
+            {
                 ShootAuto();
-                anim.SetBool(IsShooting, true);
-                break;
-            case Gun.Shotgun when Input.GetMouseButtonDown(0):
-                ShootShotgun();
-                anim.SetBool(IsShooting, true);
-                break;
-            default:
-                anim.SetBool(IsShooting, false);
-                break;
+            }
+        }
+        
+        if (Input.GetMouseButtonUp(0))
+        {
+            anim.SetBool(MouseHeldDown, false);
         }
 
         var change = new Vector2(h, v).normalized;
