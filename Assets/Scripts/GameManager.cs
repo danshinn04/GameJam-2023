@@ -1,5 +1,3 @@
-//using System.Collections;
-
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,133 +5,155 @@ using UnityEngine.Tilemaps;
 
 public class GameManager : MonoBehaviour
 {
-    private int rounds;
     public GameObject normalEnemy;
-    public static List<GameObject> enemies = new();
-
     public Tilemap tilemap;
     public TileBase ruleTile;
-
-    private Vector2Int start = new(1, 1);
-    private Vector2Int end = new(3, 3);
-    private List<Vector2Int> solutionPath;
-    private List<int> exits = new();
-
-    private int[][] currentMap;
-
-    private readonly int[][] _a1 = {
-        new[] {1,1,1,1,1},
-        new[] {1,0,1,0,1},
-        new[] {1,0,1,0,1},
-        new[] {1,0,0,0,1},
-        new[] {1,1,1,1,1}
-    };
-
-    private readonly int[][] _a2 = {
-        new[] {1,1,1,1,1},
-        new[] {1,0,0,0,1},
-        new[] {1,0,1,1,1},
-        new[] {1,0,0,0,1},
-        new[] {1,1,1,1,1}
-    };
-
-    private readonly int[][] _a3 = {
-        new[] {1,1,1,1,1},
-        new[] {1,0,0,0,1},
-        new[] {1,0,1,0,1},
-        new[] {1,0,1,0,1},
-        new[] {1,1,1,1,1}
-    };
-
-    private readonly int[][] _a4 = {
-        new[] {1,1,1,1,1},
-        new[] {1,0,0,0,1},
-        new[] {1,1,1,0,1},
-        new[] {1,0,0,0,1},
-        new[] {1,1,1,1,1}
-    };
     
-    private List<List<int>> AppendXGeneration(List<List<int>> arrlist1, int[][] arrlist2)
-    {
-        var newList = new List<List<int>>();
-        var thiccy = Random.Range(0, 2) == 1 ? 3 : 1;
+    public static readonly List<GameObject> EnemyList = new();
 
-        for (int idx = 0; idx < arrlist1.Count; idx++)
+    private int[][] _currentMap;
+    private int _roundNum = 1;
+
+    private static readonly List<int[,]> CellsList = new() {
+        new [,] {
+            {1,1,1,1,1,1,1},
+            {1,0,0,1,0,0,1},
+            {1,0,0,1,0,0,1},
+            {1,0,0,1,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,1,1,1,1,1,1}
+        },
+        new [,] {
+            {1,1,1,1,1,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,1,1,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,1,1,1,1,1,1}
+        },
+        new [,] {
+            {1,1,1,1,1,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,1,0,0,1},
+            {1,0,0,1,0,0,1},
+            {1,0,0,1,0,0,1},
+            {1,1,1,1,1,1,1}
+        },
+        new [,] {
+            {1,1,1,1,1,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,1,1,1,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,1,1,1,1,1,1}
+        },
+        new [,] {
+            {1,1,1,1,1,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,1,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,1,1,1,1,1,1}
+        },
+        new [,] {
+            {1,1,1,1,1,1,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,0,0,0,0,0,1},
+            {1,1,1,1,1,1,1}
+        },
+    };
+
+    private static List<int> GetRow(int[,] mat, int rowNum)
+    {
+        return Enumerable.Range(0, mat.GetLength(1)).Select(idx => mat[rowNum, idx]).ToList();
+    }
+
+    private static List<List<int>> GenerateMapRow(int size)
+    {
+        var mapRow = new List<List<int>>();
+        var firstRandCell = CellsList[Random.Range(0, CellsList.Count)];
+
+        for (var row = 0; row < firstRandCell.GetLength(0); row++)
         {
-            var newRow = arrlist1[idx];
-            
-            for(int i = 1; i < arrlist2[0].Length; i++)  {
-                newRow.Add(arrlist2[idx][i]);
-            }
-            
-            if (idx == thiccy)
-            {
-                newRow[arrlist1[0].Count - 1] = 0;
-            }
-            
-            newList.Add(newRow);
-        }
-        return newList;
-    }
-
-    private List<List<int>> AppendYGeneration(List<List<int>> arrList1, List<List<int>> arrList2) {
-        var lenofarr1 = arrList1[0].Count;
-        var p = lenofarr1 / 2;
-        var ran = Random.Range(1, p) * 2 - 1;
-
-        List<int> a = arrList1[arrList1.Count - 1];
-
-        List<List<int>> newMap = arrList1.GetRange(0, arrList1.Count - 1);
-        newMap.Add(a);
-        newMap.AddRange(arrList2.GetRange(1, arrList2.Count - 1));
-
-        exits.Add(ran);
-
-        return newMap;
-    }
-
-    private int[][] RandomMapGeneration(int size)
-    {
-        var exits = new List<int>();
-        
-        var quadList = new List<int[][]> { _a1, _a2, _a3, _a4 };
-        var randQuad = quadList[Random.Range(0, quadList.Count)];
-        var firstRow = randQuad.Select(row => new List<int>(row)).ToList();
-
-        for (var i = 0; i < size; i++) {
-            firstRow = AppendXGeneration(firstRow, quadList[Random.Range(0, quadList.Count)]);
+            mapRow.Add(GetRow(firstRandCell, row));
         }
 
-        var finalList = firstRow;
-        
         for (var i = 0; i < size - 1; i++)
         {
-            var anotherRandQuad = quadList[Random.Range(0, quadList.Count)];
-            var nextRow = anotherRandQuad.Select(row => new List<int>(row)).ToList();
+            var randCell = CellsList[Random.Range(0, CellsList.Count)];
 
-            for (var j = 0; j < size - 1; j++) {
-                nextRow = AppendXGeneration(nextRow, quadList[Random.Range(0, quadList.Count)]);
+            // 0 for top, 1 for below
+            var rand = Random.Range(0, 2);
+            var width = mapRow[0].Count;
+                
+            if (rand == 0)
+            {
+                mapRow[1][width - 1] = 0;
+                mapRow[2][width - 1] = 0;
+            }
+            else
+            {
+                mapRow[4][width - 1] = 0;
+                mapRow[5][width - 1] = 0;
+            }
+
+            for (var row = 0; row < mapRow.Count; row++)
+            {
+                mapRow[row].AddRange(GetRow(randCell, row).GetRange(1, randCell.GetLength(1) - 1));
+            }
+        }
+
+        return mapRow;
+    }
+
+    private static int[][] GenerateFullMap(int w, int h)
+    {
+        var fullMap = new List<List<int>>();
+        fullMap.AddRange(GenerateMapRow(w));
+
+        for (var i = 0; i < h - 1; i++)
+        {
+            var mapRow = GenerateMapRow(w);
+            mapRow.RemoveRange(0, 1);
+
+            var width = fullMap[0].Count;
+            var height = fullMap.Count;
+
+            for (var col = 0; col < width; col += 6)
+            {
+                if (col + 1 == width) break;
+                
+                // 0 for left, 1 for right
+                if (Random.Range(0, 2) == 0)
+                {
+                    fullMap[height - 1][col + 1] = 0;
+                    fullMap[height - 1][col + 2] = 0;
+                }
+                else
+                {
+                    fullMap[height - 1][col + 4] = 0;
+                    fullMap[height - 1][col + 5] = 0;
+                }
             }
             
-            finalList = AppendYGeneration(finalList, nextRow);
+            fullMap.AddRange(mapRow);
         }
         
-        var finalMap = new int[finalList.Count][];
-
-        var idx = 0;
-        foreach (var row in finalList)
-        {
-            finalMap[idx] = row.ToArray();
-            idx++;
-        }
-        
-        return finalMap;
+        return fullMap.Select(row => row.ToArray()).ToArray();
     }
 
     private void MapToTile()
     {
-        var width = currentMap[0].Length;
-        var height = currentMap.Length;
+        var width = _currentMap[0].Length;
+        var height = _currentMap.Length;
 
         var offset = new Vector2Int(-Mathf.FloorToInt(width / 2f), -Mathf.FloorToInt(height / 2f));
 
@@ -141,7 +161,7 @@ public class GameManager : MonoBehaviour
         {
             for (var x = 0; x < width; x++)
             {
-                if (currentMap[y][x] == 1)
+                if (_currentMap[y][x] == 1)
                 {
                     tilemap.SetTile(new Vector3Int(x + offset.x, y + offset.y, 0), ruleTile);
                 }
@@ -151,30 +171,31 @@ public class GameManager : MonoBehaviour
 
     private void GenerateRound()
     {
-        rounds++;
+        Debug.Log("Round " + _roundNum);
 
-        Debug.Log("Round " + rounds);
+        _currentMap = GenerateFullMap(5, 3);
+        tilemap.ClearAllTiles();
+        MapToTile();
 
-        for (int i = 0; i < rounds; i++)
+        for (var i = 0; i < _roundNum; i++)
         {
-            GameObject enemy = Instantiate(normalEnemy, new Vector3(Random.Range(-5.0f, 5.0f),
+            var enemy = Instantiate(normalEnemy, new Vector3(Random.Range(-5.0f, 5.0f),
                 Random.Range(-5.0f, 5.0f), 0.0f), Quaternion.identity);
-            enemies.Add(enemy);
+            
+            EnemyList.Add(enemy);
         }
+        
+        _roundNum++;
     }
 
     private void Start()
     {
         GenerateRound();
-        
-        currentMap = RandomMapGeneration(5);
-        tilemap.ClearAllTiles();
-        MapToTile();
     }
 
     private void Update()
     {
-        if (enemies.Count > 0)
+        if (EnemyList.Count > 0)
         {
             return;
         }
