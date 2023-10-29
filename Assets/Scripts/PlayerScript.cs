@@ -38,6 +38,9 @@ public class PlayerScript : MonoBehaviour
     private float hitDamage;
     private Color ogColor;
     
+    private Coroutine gunCoroutine;
+    private Coroutine dmgCoroutine;
+    
     private const float Speed = 5.0f;
     private Gun _gun = Gun.Pistol;
     private Vector3 _cVector = new(0, 0, 0);
@@ -51,6 +54,7 @@ public class PlayerScript : MonoBehaviour
     public AudioClip rifleSound;
     public AudioClip shotgunSound;
 
+    public Image overlay;
 
     private void RotatePlayer() {
         var charVector = Camera.main.WorldToScreenPoint(transform.position);
@@ -118,10 +122,32 @@ public class PlayerScript : MonoBehaviour
         health -= f;
         hitDamage = 0.25f;
         healthText.text = "HP " + health;
+
+        if (dmgCoroutine != null)
+        {
+            StopCoroutine(dmgCoroutine);
+        }
+        StartCoroutine(AnimTakeDamage());
     }
 
     float getHealth() {
         return health;
+    }
+
+    private IEnumerator AnimTakeDamage()
+    {
+        var elapsed = 0f;
+
+        while (elapsed < 0.5f)
+        {
+            elapsed += Time.deltaTime;
+            var ratio = elapsed / 0.5f;
+
+            float opacity = Mathf.Lerp(0.5f, 0f, ratio);
+            overlay.color = new Color(overlay.color.r, overlay.color.g, overlay.color.b, opacity);
+
+            yield return null;
+        }
     }
 
     private IEnumerator AnimateCurrGun(string gunName, Sprite sprite)
@@ -200,8 +226,12 @@ public class PlayerScript : MonoBehaviour
             {
                 _gun = Gun.Pistol;
                 anim.SetInteger(CurrGun, 0);
-                StopAllCoroutines();
-                StartCoroutine(AnimateCurrGun("Pistol", pistolSprite));
+                
+                if (gunCoroutine != null)
+                {
+                    StopCoroutine(gunCoroutine);
+                }
+                gunCoroutine = StartCoroutine(AnimateCurrGun("Pistol", pistolSprite));
             }
         }
         if (Input.GetKey(KeyCode.Alpha2))
@@ -210,8 +240,12 @@ public class PlayerScript : MonoBehaviour
             {
                 _gun = Gun.Automatic;
                 anim.SetInteger(CurrGun, 1);
-                StopAllCoroutines();
-                StartCoroutine(AnimateCurrGun("Assault Rifle", autoSprite));
+                
+                if (gunCoroutine != null)
+                {
+                    StopCoroutine(gunCoroutine);
+                }
+                gunCoroutine = StartCoroutine(AnimateCurrGun("Assault Rifle", autoSprite));
             }
         }
         if (Input.GetKey(KeyCode.Alpha3))
@@ -220,8 +254,12 @@ public class PlayerScript : MonoBehaviour
             {
                 _gun = Gun.Shotgun;
                 anim.SetInteger(CurrGun, 2);
-                StopAllCoroutines();
-                StartCoroutine(AnimateCurrGun("Shotgun", shotgunSprite));
+
+                if (gunCoroutine != null)
+                {
+                    StopCoroutine(gunCoroutine);
+                }
+                gunCoroutine = StartCoroutine(AnimateCurrGun("Shotgun", shotgunSprite));
             }
         }
 
