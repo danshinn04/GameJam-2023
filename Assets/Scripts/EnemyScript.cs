@@ -16,6 +16,9 @@ public class EnemyScript : MonoBehaviour
     private bool chase = false;
     private bool idle = false;
 
+    public Animator anim;
+    private static readonly int Angry = Animator.StringToHash("Angry");
+
     // hitDamage
     private float hitDamage = 0.0f;
     private float deathSequence = 0.0f;
@@ -29,6 +32,7 @@ public class EnemyScript : MonoBehaviour
 
     // layerMask
     public LayerMask Ignore;
+    
 
     // Start is called before the first frame update
     void Start()
@@ -115,6 +119,8 @@ public class EnemyScript : MonoBehaviour
             Vector3 target = player.transform.position - transform.position;
 
             if(target.magnitude < 7.0f || path != null) {
+                anim.SetBool(Angry, true);
+                
                 int ex = (int)(transform.position.x + (n / 2.0f));
                 int ey = (int)(transform.position.y + (m / 2.0f));
                 
@@ -166,7 +172,9 @@ public class EnemyScript : MonoBehaviour
         GetComponent<SpriteRenderer>().color = ogColor;
         if(hitDamage != 0.0f) {
             hitDamage = Mathf.Max(0.0f, hitDamage - Time.deltaTime);
-            GetComponent<SpriteRenderer>().color = Color.black;
+
+            Color dmg = Color.Lerp(ogColor, Color.red, hitDamage / 0.1f);
+            GetComponent<SpriteRenderer>().color = dmg;
         }
         if(health <= 0.0f) {
             if(deathSequence == 0.0f) {
