@@ -34,6 +34,9 @@ public class PlayerScript : MonoBehaviour
     public Sprite autoSprite;
     public Sprite shotgunSprite;
 
+    private float hitDamage;
+    private Color ogColor;
+    
     private const float Speed = 5.0f;
     private Gun _gun = Gun.Pistol;
     private Vector3 _cVector = new(0, 0, 0);
@@ -100,11 +103,11 @@ public class PlayerScript : MonoBehaviour
             Vector2 rotatedVector = Quaternion.Euler(0, 0, angle) * _cVector;
             rotatedVector.Normalize();
 
-            var pellet = Instantiate(bullet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
-            pellet.transform.localScale = new Vector3(0.175f, 0.175f, 0.0f);
-            pellet.GetComponent<BulletScript>().setDamage(15.0f);
-            pellet.GetComponent<BulletScript>().direction = rotatedVector;
-            pellet.GetComponent<BulletScript>().speed = 16.0f + Random.Range(1,5);
+            var projectile = Instantiate(pellet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
+            projectile.transform.localScale = new Vector3(0.175f, 0.175f, 0.0f);
+            projectile.GetComponent<BulletScript>().setDamage(15.0f);
+            projectile.GetComponent<BulletScript>().direction = rotatedVector;
+            projectile.GetComponent<BulletScript>().speed = 16.0f + Random.Range(1,5);
         }
 
         audioSource.PlayOneShot(shotgunSound, 0.4f);
@@ -112,6 +115,7 @@ public class PlayerScript : MonoBehaviour
     
     public void takeDamage(float f) {
         health -= f;
+        hitDamage = 0.25f;
         healthText.text = "HP " + health;
     }
 
@@ -124,10 +128,20 @@ public class PlayerScript : MonoBehaviour
         healthText.text = "HP " + health;
         currGunText.text = "Pistol";
         currGunImage.sprite = pistolSprite;
+
+        ogColor = GetComponent<SpriteRenderer>().color;
     }
 
     private void Update()
     {
+        if (hitDamage != 0f)
+        {
+            hitDamage = Mathf.Max(0.0f, hitDamage - Time.deltaTime);
+
+            Color dmg = Color.Lerp(ogColor, Color.red, hitDamage / 0.25f);
+            GetComponent<SpriteRenderer>().color = dmg;
+        }
+        
         float h = 0;
         float v = 0;
 

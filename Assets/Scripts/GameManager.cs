@@ -8,8 +8,14 @@ using UnityEngine.UI;
 public class GameManager : MonoBehaviour
 {
     public GameObject normalEnemy;
+    
     public Tilemap tilemap;
     public TileBase ruleTile;
+
+    public Tilemap bgTilemap;
+    public TileBase borderTile;
+    public TileBase lightTile;
+    public TileBase darkTile;
     
     public static readonly List<GameObject> EnemyList = new();
     public static int[][] CurrentMap;
@@ -17,8 +23,11 @@ public class GameManager : MonoBehaviour
     public static float Px;
     public static float Py;
 
+    public TMP_Text bigRoundText;
     public TMP_Text roundText;
     public TMP_Text enemiesText;
+
+    private float roundStartTime;
     
     private int _roundNum = 1;
 
@@ -165,24 +174,81 @@ public class GameManager : MonoBehaviour
 
         var offset = new Vector2Int(-Mathf.FloorToInt(width / 2f), -Mathf.FloorToInt(height / 2f));
 
+        Vector3Int pos;
+        
         for (var y = 0; y < height; y++)
         {
             for (var x = 0; x < width; x++)
             {
+                pos = new Vector3Int(x + offset.x - 1, y + offset.y - 1, 0);
+
+                var row = y + 1;
+                var col = x + 1;
+                
+                if (col % 2 == 1)
+                {
+                    if (row % 2 == 1)
+                    {
+                        bgTilemap.SetTile(pos, darkTile);
+                    }
+                    else
+                    {
+                        bgTilemap.SetTile(pos, lightTile);
+                    }
+                }
+                else
+                {
+                    if (row % 2 == 1)
+                    {
+                        bgTilemap.SetTile(pos, lightTile);
+                    }
+                    else
+                    {
+                        bgTilemap.SetTile(pos, darkTile);
+                    }
+                }
+                
                 if (CurrentMap[y][x] == 1)
                 {
-                    tilemap.SetTile(new Vector3Int(x + offset.x - 1, y + offset.y - 1, 0), ruleTile);
+                    tilemap.SetTile(pos, ruleTile);
                 }
             }
         }
+
+        for (int x = 0; x < width; x++)
+        {
+            pos = new Vector3Int(x + offset.x - 1, 0 - 1 + offset.y - 1, 0);
+            bgTilemap.SetTile(pos, borderTile);
+            pos = new Vector3Int(x + offset.x - 1, height + offset.y - 1, 0);
+            bgTilemap.SetTile(pos, borderTile);
+        }
+
+        for (int y = 0; y < height; y++)
+        {
+            pos = new Vector3Int(0 - 1 + offset.x - 1, y + offset.y - 1, 0);
+            bgTilemap.SetTile(pos, borderTile);
+            pos = new Vector3Int(width + offset.x - 1, y + offset.y - 1, 0);
+            bgTilemap.SetTile(pos, borderTile);
+        }
+        
+        pos = new Vector3Int(0 - 1 + offset.x - 1, 0 - 1 + offset.y - 1, 0);
+        bgTilemap.SetTile(pos, borderTile);
+        pos = new Vector3Int(width + offset.x - 1, 0 - 1 + offset.y - 1, 0);
+        bgTilemap.SetTile(pos, borderTile);
+        pos = new Vector3Int(0 - 1 + offset.x - 1, height + offset.y - 1, 0);
+        bgTilemap.SetTile(pos, borderTile);
+        pos = new Vector3Int(width + offset.x - 1, height + offset.y - 1, 0);
+        bgTilemap.SetTile(pos, borderTile);
     }
 
     private void GenerateRound()
     {
         roundText.text = "Round " + _roundNum;
+        bigRoundText.text = _roundNum.ToString();
         
         CurrentMap = GenerateFullMap(5, 3);
         tilemap.ClearAllTiles();
+        bgTilemap.ClearAllTiles();
         MapToTile();
 
         for (var i = 0; i < Mathf.Min(20, _roundNum + 2); i++)
@@ -205,6 +271,7 @@ public class GameManager : MonoBehaviour
         }
         
         _roundNum++;
+        roundStartTime = 1f;
     }
 
     private void Start()
@@ -215,6 +282,14 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
+        if (roundStartTime != 0f) 
+        {
+            roundStartTime = Mathf.Max(0.0f, roundStartTime - Time.deltaTime);
+            Color textCol = bigRoundText.color;
+            textCol.a = roundStartTime / 1f;
+            bigRoundText.color = textCol;
+        }
+        
         if (EnemyList.Count > 0)
         {
             enemiesText.text = "Enemies left: " + EnemyList.Count;
