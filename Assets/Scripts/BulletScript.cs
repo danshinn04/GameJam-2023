@@ -7,11 +7,17 @@ public class BulletScript : MonoBehaviour
     public Vector3 direction;
     public float speed;
     private float timer;
+    private float damage;
 
     // Start is called before the first frame update
     void Start()
     {
         timer = 0.0f;
+        damage = 10.0f;
+    }
+
+    public void setDamage(float dmg) {
+        damage = dmg;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -20,7 +26,7 @@ public class BulletScript : MonoBehaviour
             Destroy(gameObject);
         }
         if(collision.gameObject.CompareTag("Enemy")) {
-            collision.gameObject.GetComponent<EnemyScript>().takeDamage(10.0f);
+            collision.gameObject.GetComponent<EnemyScript>().takeDamage(damage);
             Destroy(gameObject);
         }
     }
