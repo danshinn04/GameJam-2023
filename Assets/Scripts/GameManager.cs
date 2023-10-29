@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     private int rounds;
     public GameObject normalEnemy;
+    public GameObject player;
     public static List<GameObject> enemies = new List<GameObject>();
 
     public Tilemap tilemap;
@@ -17,12 +18,28 @@ public class GameManager : MonoBehaviour
     private List<Vector2Int> solutionPath;
     private List<int> exits = new List<int>();
 
-    private int[][] currentMap;
+    public static float px = 0.0f;
+    public static float py = 0.0f;
+
+    public static int[][] currentMap;
 
     int getRounds()
     {
         return rounds;
     }
+
+    private int[][] testMap = {
+        new int[] {1,1,1,1,1,1,1,1,1,1,1,1,1},
+        new int[] {1,0,0,0,0,0,1,0,0,0,0,0,1},
+        new int[] {1,0,0,0,0,0,1,0,0,0,0,0,1},
+        new int[] {1,0,0,0,0,0,0,0,0,0,0,0,1},
+        new int[] {1,0,0,0,0,0,0,0,0,0,0,0,1},
+        new int[] {1,1,1,1,1,1,1,1,1,1,0,0,1},
+        new int[] {1,0,0,0,0,0,0,0,0,0,0,0,1},
+        new int[] {1,0,0,0,0,0,0,0,0,0,0,0,1},
+        new int[] {1,0,0,0,0,0,0,0,0,0,0,0,1},
+        new int[] {1,1,1,1,1,1,1,1,1,1,1,1,1},
+    };
 
     private int[][] a1 = {
         new int[] {1,1,1,1,1},
@@ -130,9 +147,6 @@ public class GameManager : MonoBehaviour
         // Generate a random map of size 5x5 (or any other size)
         //Tuple<List<int[]>, List<int>> result = RandomMapGeneration(5);
         //currentMap = result.Item1.ToArray();
-
-        
-
         for (int i = 0; i < rounds; i++)
         {
             GameObject enemy = Instantiate(normalEnemy, new Vector3(Random.Range(-5.0f, 5.0f),
@@ -144,7 +158,8 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         generateRound();
-        currentMap = RandomMapGeneration(3);
+        //currentMap = RandomMapGeneration(3);
+        currentMap = testMap;
         tilemap.ClearAllTiles();
         MapToTile();
     }
