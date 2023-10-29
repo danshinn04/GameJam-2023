@@ -196,6 +196,12 @@ public class PlayerScript : MonoBehaviour
 
     private void Update()
     {
+        if (health <= 0.0f)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         if (hitDamage != 0f)
         {
             hitDamage = Mathf.Max(0.0f, hitDamage - Time.deltaTime);

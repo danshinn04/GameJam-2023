@@ -185,6 +185,12 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (player == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         GetComponent<SpriteRenderer>().color = ogColor;
         if(hitDamage != 0.0f) {
             hitDamage = Mathf.Max(0.0f, hitDamage - Time.deltaTime);
