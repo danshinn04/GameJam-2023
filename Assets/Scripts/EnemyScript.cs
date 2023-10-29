@@ -39,12 +39,12 @@ public class EnemyScript : MonoBehaviour
         chase = false;
         rb.velocity = new Vector2(0.0f, 0.0f);
 
-        float n = GameManager.currentMap[0].Length;
-        float m = GameManager.currentMap.Length;
+        float n = GameManager.CurrentMap[0].Length;
+        float m = GameManager.CurrentMap.Length;
 
-        if(GameManager.px >= 0 && GameManager.px < n && GameManager.py >= 0 && GameManager.py < n) {
-            int x = (int)GameManager.px;
-            int y = (int)GameManager.py;
+        if(GameManager.Px >= 0 && GameManager.Px < n && GameManager.Py >= 0 && GameManager.Py < n) {
+            int x = (int)GameManager.Px;
+            int y = (int)GameManager.Py;
 
             Debug.Log("Player x, Player y: " + x + "," + y);
 
@@ -59,7 +59,7 @@ public class EnemyScript : MonoBehaviour
                     return;
                 }
 
-                if(GameManager.currentMap[ey][ex] == 1) {
+                if(GameManager.CurrentMap[ey][ex] == 1) {
                     Debug.Log("Hitting a wall");
                     return;
                 }

@@ -127,12 +127,12 @@ public class PlayerScript : MonoBehaviour
 
         Vector2 change = new Vector2(h, v).normalized;
         if(change.magnitude > 0.0f) {
-            float n = GameManager.currentMap[0].Length;
-            float m = GameManager.currentMap.Length;
+            float n = GameManager.CurrentMap[0].Length;
+            float m = GameManager.CurrentMap.Length;
 
             // unity raycasting sucks ass
-            GameManager.px = (transform.position.x + transform.localScale.x / 2.0f + (n / 2.0f));
-            GameManager.py = (transform.position.y + transform.localScale.y / 2.0f + (m / 2.0f));
+            GameManager.Px = (transform.position.x + transform.localScale.x / 2.0f + (n / 2.0f));
+            GameManager.Py = (transform.position.y + transform.localScale.y / 2.0f + (m / 2.0f));
         }
 
 

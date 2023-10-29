@@ -10,8 +10,11 @@ public class GameManager : MonoBehaviour
     public TileBase ruleTile;
     
     public static readonly List<GameObject> EnemyList = new();
+    public static int[][] CurrentMap;
 
-    private int[][] _currentMap;
+    public static float Px;
+    public static float Py;
+    
     private int _roundNum = 1;
 
     private static readonly List<int[,]> CellsList = new() {
@@ -152,8 +155,8 @@ public class GameManager : MonoBehaviour
 
     private void MapToTile()
     {
-        var width = _currentMap[0].Length;
-        var height = _currentMap.Length;
+        var width = CurrentMap[0].Length;
+        var height = CurrentMap.Length;
 
         var offset = new Vector2Int(-Mathf.FloorToInt(width / 2f), -Mathf.FloorToInt(height / 2f));
 
@@ -161,7 +164,7 @@ public class GameManager : MonoBehaviour
         {
             for (var x = 0; x < width; x++)
             {
-                if (_currentMap[y][x] == 1)
+                if (CurrentMap[y][x] == 1)
                 {
                     tilemap.SetTile(new Vector3Int(x + offset.x, y + offset.y, 0), ruleTile);
                 }
@@ -173,7 +176,7 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Round " + _roundNum);
 
-        _currentMap = GenerateFullMap(5, 3);
+        CurrentMap = GenerateFullMap(5, 3);
         tilemap.ClearAllTiles();
         MapToTile();
 
