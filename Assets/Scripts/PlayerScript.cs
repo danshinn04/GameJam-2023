@@ -84,16 +84,6 @@ public class PlayerScript : MonoBehaviour
             pellet.GetComponent<BulletScript>().speed = 16.0f + Random.Range(1,5);
         }
     }
-
-    
-    public void takeDamage(float f) {
-        health -= f;
-    }
-
-    float getHealth() {
-        return health;
-    }
-
     
     public void takeDamage(float f) {
         health -= f;

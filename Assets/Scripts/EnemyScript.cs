@@ -156,7 +156,7 @@ public class EnemyScript : MonoBehaviour
                 explodeTimer = 0.0f;
             }
             
-            transform.position += dir.normalized * speed * Time.deltaTime;
+            transform.position += dir.normalized * (speed * Time.deltaTime);
         }
     }
 
