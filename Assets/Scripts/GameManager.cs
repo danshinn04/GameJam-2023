@@ -185,7 +185,7 @@ public class GameManager : MonoBehaviour
         tilemap.ClearAllTiles();
         MapToTile();
 
-        for (var i = 0; i < Mathf.Min(10, _roundNum); i++)
+        for (var i = 0; i < Mathf.Min(20, _roundNum + 2); i++)
         {
             int y = Random.Range(1, CurrentMap.Length - 1);
             int x = Random.Range(1, CurrentMap[0].Length - 1);

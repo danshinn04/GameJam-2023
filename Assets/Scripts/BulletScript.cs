@@ -13,7 +13,7 @@ public class BulletScript : MonoBehaviour
     void Start()
     {
         timer = 0.0f;
-        damage = 10.0f;
+        //damage = 10.0f;
     }
 
     public void setDamage(float dmg) {

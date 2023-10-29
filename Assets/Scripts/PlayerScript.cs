@@ -19,21 +19,21 @@ public class PlayerScript : MonoBehaviour
     public GameObject bullet;
     public GameObject pellet;
     public Rigidbody2D rb;
-
-    public TMP_Text healthText;
     
+    public TMP_Text healthText;
+
     public Animator anim;
     private static readonly int CurrGun = Animator.StringToHash("CurrGun");
     private static readonly int MouseHeldDown = Animator.StringToHash("MouseHeldDown");
     private static readonly int MouseClicked = Animator.StringToHash("MouseClicked");
-    
+
     public TMP_Text currGunText;
     public Image currGunImage;
     
     public Sprite pistolSprite;
     public Sprite autoSprite;
     public Sprite shotgunSprite;
-    
+
     private const float Speed = 5.0f;
     private Gun _gun = Gun.Pistol;
     private Vector3 _cVector = new(0, 0, 0);
@@ -41,6 +41,12 @@ public class PlayerScript : MonoBehaviour
     private float _pistolCooldown;
     private float _automaticCooldown;
     private float _shotgunCooldown;
+
+    public AudioSource audioSource;
+    public AudioClip pistolSound;
+    public AudioClip rifleSound;
+    public AudioClip shotgunSound;
+
 
     private void RotatePlayer() {
         var charVector = Camera.main.WorldToScreenPoint(transform.position);
@@ -59,7 +65,10 @@ public class PlayerScript : MonoBehaviour
         
         var projectile = Instantiate(bullet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
         projectile.GetComponent<BulletScript>().direction = _cVector;
-        projectile.GetComponent<BulletScript>().speed = 12.0f;
+        projectile.GetComponent<BulletScript>().speed = 20.0f;
+        projectile.GetComponent<BulletScript>().setDamage(45.0f);
+
+        audioSource.PlayOneShot(pistolSound, 0.7f);
     }
 
     private void ShootAuto()
@@ -71,7 +80,10 @@ public class PlayerScript : MonoBehaviour
         
         var projectile = Instantiate(bullet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
         projectile.GetComponent<BulletScript>().direction = _cVector;
-        projectile.GetComponent<BulletScript>().speed = 12.0f;
+        projectile.GetComponent<BulletScript>().speed = 20.0f;
+        projectile.GetComponent<BulletScript>().setDamage(15.0f);
+        
+        audioSource.PlayOneShot(rifleSound, 0.7f);
     }
 
     private void ShootShotgun()
@@ -94,6 +106,8 @@ public class PlayerScript : MonoBehaviour
             pellet.GetComponent<BulletScript>().direction = rotatedVector;
             pellet.GetComponent<BulletScript>().speed = 16.0f + Random.Range(1,5);
         }
+
+        audioSource.PlayOneShot(shotgunSound, 0.4f);
     }
     
     public void takeDamage(float f) {

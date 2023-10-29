@@ -12,7 +12,7 @@ public class EnemyScript : MonoBehaviour
     private Color ogColor;
 
     private float health = 100.0f;
-    private float speed = 6.0f;
+    private float speed = 7.0f;
     private bool chase = false;
     private bool idle = false;
 
@@ -32,6 +32,11 @@ public class EnemyScript : MonoBehaviour
 
     // layerMask
     public LayerMask Ignore;
+
+    public AudioSource audioSource;
+    public AudioClip beep;
+    public AudioClip hit;
+    public AudioClip boom;
     
 
     // Start is called before the first frame update
@@ -46,6 +51,7 @@ public class EnemyScript : MonoBehaviour
     public void takeDamage(float damage) {
         health -= damage;
         hitDamage = 0.1f;
+        audioSource.PlayOneShot(hit, 0.4f);
     }
 
     bool IsValidMove(int[][] maze, int y, int x, HashSet<(int, int)> visited)
@@ -130,23 +136,32 @@ public class EnemyScript : MonoBehaviour
 
                 if(path != null && path.Count > 0) {
                     if((goal - transform.position).magnitude < 1.2f) {
+                        audioSource.PlayOneShot(beep, 0.4f);
+
                         path.RemoveAt(0);
-                        (ny, nx) = path[0];
-                        
-                        goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                        goal = player.transform.position;
+                        if(path.Count != 0) {
+                            (ny, nx) = path[0];
+                            goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                        }
                         dir = goal - transform.position;
                     }
                 } else {
                     path = MazeSolver(GameManager.CurrentMap, (ey, ex), (y, x));
                     path.RemoveAt(0);
-                    (ny, nx) = path[0];
 
-                    goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                    goal = player.transform.position;
+                    if(path.Count != 0) {
+                        (ny, nx) = path[0];
+                        goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                    }
                     dir = goal - transform.position;
-                
                 }
             
                 if(target.magnitude < 2.0f) {
+                    goal = player.transform.position;
+                    dir = goal - transform.position;
+
                     if(explodeTimer < 0.0f) {
                         health = 0.0f;
                         player.GetComponent<PlayerScript>().takeDamage(20.0f);
@@ -156,6 +171,7 @@ public class EnemyScript : MonoBehaviour
                         explodeTimer = 1.0f;
                     }
                     explodeTimer -= Time.deltaTime;
+                    transform.position += dir.normalized * (speed * Time.deltaTime);
                     return;
                 }
 
@@ -182,15 +198,19 @@ public class EnemyScript : MonoBehaviour
                 Destroy(GetComponent<CircleCollider2D>());
                 GameManager.EnemyList.Remove(gameObject);
                 deathSequence = 0.4f;
+                audioSource.PlayOneShot(boom, 0.4f);
             }
             if(deathSequence > 0.0f) {
-                deathSequence -= Time.deltaTime;
                 GetComponent<SpriteRenderer>().color = new Color(deathSequence, deathSequence, deathSequence, deathSequence);
                 float amt = 1.0f - deathSequence;
                 transform.localScale += new Vector3(amt * 0.05f, amt * 0.05f, 1.0f);
             }
-
             if(deathSequence <= 0.0f) {
+                transform.localScale = new Vector3(0, 0, 0);
+            }
+            deathSequence -= Time.deltaTime;
+            
+            if(deathSequence <= -1.5f) {
                 Destroy(gameObject);
             }
 
