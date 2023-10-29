@@ -82,7 +82,6 @@ public class EnemyScript : MonoBehaviour
             // If we've reached the destination
             if ((currY, currX) == end)
             {
-                Debug.Log("solved");
                 List<(int, int)> path = new List<(int, int)>();
                 while ((currY, currX) != start)
                 {
@@ -101,7 +100,6 @@ public class EnemyScript : MonoBehaviour
                 int newX = currX + direction[1];
                 if (IsValidMove(maze, newY, newX, visited))
                 {
-                    Debug.Log(maze[newY][newX]);
                     queue.Enqueue((newY, newX));
                     visited.Add((newY, newX));
                     previous[(newY, newX)] = (currY, currX);
@@ -148,14 +146,18 @@ public class EnemyScript : MonoBehaviour
                     }
                 } else {
                     path = MazeSolver(GameManager.CurrentMap, (ey, ex), (y, x));
-                    path.RemoveAt(0);
 
-                    goal = player.transform.position;
-                    if(path.Count != 0) {
-                        (ny, nx) = path[0];
-                        goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                    if (path != null)
+                    {
+                        path.RemoveAt(0);
+
+                        goal = player.transform.position;
+                        if(path.Count != 0) {
+                            (ny, nx) = path[0];
+                            goal = new Vector3(nx - (n / 2.0f), ny - (m / 2.0f), 0.0f);
+                        }
+                        dir = goal - transform.position;
                     }
-                    dir = goal - transform.position;
                 }
             
                 if(target.magnitude < 2.0f) {

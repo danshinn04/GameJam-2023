@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public TileBase lightTile;
     public TileBase darkTile;
     
-    public static readonly List<GameObject> EnemyList = new();
+    public static List<GameObject> EnemyList = new();
     public static int[][] CurrentMap;
 
     public static float Px;
@@ -276,12 +276,28 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        EnemyList = new List<GameObject>();
+        CurrentMap = new int[][] {};
+
+        Px = 0f;
+        Py = 0f;
+        
         enemiesText.text = "Enemies left: " + EnemyList.Count;
         GenerateRound();
     }
 
     private void Update()
     {
+        if (Input.GetKey(KeyCode.R))
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Game");
+        }
+
+        if (Input.GetKey(KeyCode.Escape))
+        {
+            UnityEngine.SceneManagement.SceneManager.LoadScene("Menu");
+        }
+        
         if (roundStartTime != 0f) 
         {
             roundStartTime = Mathf.Max(0.0f, roundStartTime - Time.deltaTime);
