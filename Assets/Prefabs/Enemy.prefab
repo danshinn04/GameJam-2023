@@ -122,9 +122,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 879b3b4b3725ec049bfa49437c27c2f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  block: {fileID: 7508205323864383132, guid: e1935f663a9d923429750b23cce92433, type: 3}
   anim: {fileID: 2041730483915783296}
-  Ignore:
+  ignore:
     serializedVersion: 2
     m_Bits: 4
   audioSource: {fileID: 5449567764489015887}

@@ -8,13 +8,10 @@ public class EnemyScript : MonoBehaviour
     private Vector3 _goal;
     private Rigidbody2D _rb;
     private GameObject _player;
-    public GameObject block;
     private Color _ogColor;
 
     private float _health = 100.0f;
-    private float _speed = 5.5f;
-    private bool _chase;
-    private bool _idle;
+    private float _speed = 6.5f;
 
     public Animator anim;
     private static readonly int Angry = Animator.StringToHash("Angry");
@@ -22,8 +19,6 @@ public class EnemyScript : MonoBehaviour
     // hitDamage
     private float _hitDamage;
     private float _deathSequence;
-    private float _attention = 0.0f;
-    private float _wander = 0.0f;
     private float _explodeTimer;
 
     private List<(int, int)> _path;
@@ -45,7 +40,6 @@ public class EnemyScript : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _player = GameObject.Find("Player");
         _ogColor = GetComponent<SpriteRenderer>().color;
-        _idle = true;
     }
 
     public void TakeDamage(float damage) {
@@ -77,12 +71,12 @@ public class EnemyScript : MonoBehaviour
 
         while (queue.Count > 0)
         {
-            (int currY, int currX) = queue.Dequeue();
+            var (currY, currX) = queue.Dequeue();
 
             // If we've reached the destination
             if ((currY, currX) == end)
             {
-                List<(int, int)> path = new List<(int, int)>();
+                var path = new List<(int, int)>();
                 while ((currY, currX) != start)
                 {
                     //Instantiate(block, new Vector3(currX - (n / 2.0f), currY - (m / 2.0f), 0.0f), Quaternion.identity);
@@ -96,23 +90,21 @@ public class EnemyScript : MonoBehaviour
 
             foreach (int[] direction in directions)
             {
-                int newY = currY + direction[0];
-                int newX = currX + direction[1];
-                if (IsValidMove(maze, newY, newX, visited))
-                {
-                    queue.Enqueue((newY, newX));
-                    visited.Add((newY, newX));
-                    previous[(newY, newX)] = (currY, currX);
-                }
+                var newY = currY + direction[0];
+                var newX = currX + direction[1];
+
+                if (!IsValidMove(maze, newY, newX, visited)) continue;
+                
+                queue.Enqueue((newY, newX));
+                visited.Add((newY, newX));
+                previous[(newY, newX)] = (currY, currX);
             }
         }
 
         return null;
     }
 
-    public void Sentry() {
-        _chase = false;
-
+    private void Sentry() {
         float n = GameManager.CurrentMap[0].Length;
         float m = GameManager.CurrentMap.Length;
 
@@ -185,7 +177,7 @@ public class EnemyScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (_player == null)
         {
@@ -206,16 +198,22 @@ public class EnemyScript : MonoBehaviour
                 Destroy(GetComponent<CircleCollider2D>());
                 GameManager.EnemyList.Remove(gameObject);
                 _deathSequence = 0.4f;
-                audioSource.PlayOneShot(boom, 0.4f);
+                audioSource.PlayOneShot(boom, 0.2f);
             }
-            if(_deathSequence > 0.0f) {
-                GetComponent<SpriteRenderer>().color = new Color(_deathSequence, _deathSequence, _deathSequence, _deathSequence);
-                float amt = 1.0f - _deathSequence;
-                transform.localScale += new Vector3(amt * 0.05f, amt * 0.05f, 1.0f);
+            switch (_deathSequence)
+            {
+                case > 0.0f:
+                {
+                    GetComponent<SpriteRenderer>().color = new Color(_deathSequence, _deathSequence, _deathSequence, _deathSequence);
+                    var amt = 1.0f - _deathSequence;
+                    transform.localScale += new Vector3(amt * 0.05f, amt * 0.05f, 1.0f);
+                    break;
+                }
+                case <= 0.0f:
+                    transform.localScale = new Vector3(0, 0, 0);
+                    break;
             }
-            if(_deathSequence <= 0.0f) {
-                transform.localScale = new Vector3(0, 0, 0);
-            }
+
             _deathSequence -= Time.deltaTime;
             
             if(_deathSequence <= -1.5f) {
@@ -226,49 +224,5 @@ public class EnemyScript : MonoBehaviour
         }
 
         Sentry();
-
-        /*
-        if(chase || attention > 0.0f) {
-            Vector3 target = player.transform.position - transform.position;
-            float angle = Mathf.Atan2(target.y, target.x) * Mathf.Rad2Deg - 90.0f;
-            transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
-            rb.velocity = target.normalized * speed;
-            attention = Mathf.Max(0.0f, attention - Time.deltaTime);
-
-            if(target.magnitude < 2.0f) {
-                if(explodeTimer < 0.0f) {
-                    health = 0.0f;
-                    player.GetComponent<PlayerScript>().takeDamage(20.0f);
-                    return;
-                }
-                if(explodeTimer == 0.0f) {
-                    explodeTimer = 1.0f;
-                }
-                explodeTimer -= Time.deltaTime;
-                return;
-            }
-
-            explodeTimer = 0.0f;
-        }*/
-        /*
-        if(!idle && !chase && attention == 0.0f) {
-            idle = true;
-        }
-        if(idle) {
-            if(Random.Range(0.0f, 10.0f) < 0.01f && wander == 0.0f) {
-                direction = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90.0f;
-                transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
-                wander = 2.5f;
-            }
-            if(wander > 0.0f) {
-                wander = Mathf.Max(0.0f, wander - Time.deltaTime);
-                
-                Debug.Log(direction);
-                Debug.Log(rb.velocity);
-
-                rb.velocity = direction * speed;
-            }
-        }*/
     }
 }

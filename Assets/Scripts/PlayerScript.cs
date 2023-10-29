@@ -15,8 +15,9 @@ public enum Gun
 public class PlayerScript : MonoBehaviour
 {
     private float health = 100.0f;
-    private float speed = 5.0f;
-    Vector3 cVector;
+    private float speed = 6.0f;
+    
+    private Vector3 cVector;
     public GameObject bullet;
     public GameObject pellet;
     public Rigidbody2D rb;
@@ -55,6 +56,7 @@ public class PlayerScript : MonoBehaviour
     public AudioClip pistolSound;
     public AudioClip rifleSound;
     public AudioClip shotgunSound;
+    public AudioClip hitSound;
 
     public Image overlay;
 
@@ -124,16 +126,14 @@ public class PlayerScript : MonoBehaviour
         health -= f;
         hitDamage = 0.25f;
         healthText.text = "HP " + health;
+        
+        audioSource.PlayOneShot(hitSound, 1f);
 
         if (dmgCoroutine != null)
         {
             StopCoroutine(dmgCoroutine);
         }
         StartCoroutine(AnimTakeDamage());
-    }
-
-    float getHealth() {
-        return health;
     }
 
     private IEnumerator AnimTakeDamage()
