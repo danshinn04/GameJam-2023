@@ -11,7 +11,7 @@ public class PlayerScript : MonoBehaviour
     public Animator anim;
     private static readonly int IsShooting = Animator.StringToHash("isShooting");
     
-    private int gunType = 2;
+    private int gunType = 1;
 
     // pistolCoolDown
     private float pistolCoolDown;
@@ -73,7 +73,7 @@ public class PlayerScript : MonoBehaviour
                 Vector2 rotatedVector = Quaternion.Euler(0, 0, angle) * cVector;
                 rotatedVector.Normalize();
 
-                GameObject pellet = Instantiate(bullet, transform.position, transform.rotation);
+                GameObject pellet = Instantiate(bullet, transform.position + (0.5f * cVector.normalized), transform.rotation);
                 pellet.transform.localScale = new Vector3(0.175f, 0.175f, 0.0f);
                 pellet.GetComponent<BulletScript>().setDamage(15.0f);
                 pellet.GetComponent<BulletScript>().direction = rotatedVector;
