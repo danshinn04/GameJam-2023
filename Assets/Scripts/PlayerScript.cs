@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using TMPro;
+using UnityEngine.UI;
 
 public enum Gun
 {
@@ -25,6 +26,13 @@ public class PlayerScript : MonoBehaviour
     private static readonly int CurrGun = Animator.StringToHash("CurrGun");
     private static readonly int MouseHeldDown = Animator.StringToHash("MouseHeldDown");
     private static readonly int MouseClicked = Animator.StringToHash("MouseClicked");
+    
+    public TMP_Text currGunText;
+    public Image currGunImage;
+    
+    public Sprite pistolSprite;
+    public Sprite autoSprite;
+    public Sprite shotgunSprite;
     
     private const float Speed = 5.0f;
     private Gun _gun = Gun.Pistol;
@@ -100,6 +108,8 @@ public class PlayerScript : MonoBehaviour
     private void Start()
     {
         healthText.text = "HP " + health;
+        currGunText.text = "Pistol";
+        currGunImage.sprite = pistolSprite;
     }
 
     private void Update()
@@ -124,16 +134,22 @@ public class PlayerScript : MonoBehaviour
         {
             _gun = Gun.Pistol;
             anim.SetInteger(CurrGun, 0);
+            currGunText.text = "Pistol";
+            currGunImage.sprite = pistolSprite;
         }
         if (Input.GetKey(KeyCode.Alpha2))
         {
             _gun = Gun.Automatic;
             anim.SetInteger(CurrGun, 1);
+            currGunText.text = "Assault Rifle";
+            currGunImage.sprite = autoSprite;
         }
         if (Input.GetKey(KeyCode.Alpha3))
         {
             _gun = Gun.Shotgun;
             anim.SetInteger(CurrGun, 2);
+            currGunText.text = "Shotgun";
+            currGunImage.sprite = shotgunSprite;
         }
 
         RotatePlayer();
