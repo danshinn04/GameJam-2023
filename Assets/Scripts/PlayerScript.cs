@@ -7,9 +7,10 @@ public class PlayerScript : MonoBehaviour
     private float speed = 5.0f;
     Vector3 cVector;
     public GameObject bullet;
+    public GameObject pellet;
     public Rigidbody2D rb;
     
-    private int gunType = 1;
+    private int gunType = 2;
 
     // pistolCoolDown
     private float pistolCoolDown = 0.0f;
@@ -62,15 +63,20 @@ public class PlayerScript : MonoBehaviour
     void shootShotgun() {
         if(shotgunCoolDown == 0.0f) {
             // mouseCoolDown
-            shotgunCoolDown = 0.10f;
+            int pellets = 4;
+            shotgunCoolDown = 0.65f;
+            for(int i = -pellets + 1; i < pellets; i++) {
+                float angle = i / (float) pellets * 10.0f;
+                float angelRad= Mathf.Deg2Rad * angle;
+                
+                Vector2 rotatedVector = Quaternion.Euler(0, 0, angle) * cVector;
+                rotatedVector.Normalize();
 
-
-            for(int i = -1; i < 1; i++) {
-                Vector3 bDir = Quaternion.AngleAxis((float) i * 100.0f, Vector3.up) * cVector;
-
-                GameObject projectile = Instantiate(bullet, transform.position, transform.rotation);
-                projectile.GetComponent<BulletScript>().direction = bDir;
-                projectile.GetComponent<BulletScript>().speed = 12.0f;
+                GameObject pellet = Instantiate(bullet, transform.position, transform.rotation);
+                pellet.transform.localScale = new Vector3(0.175f, 0.175f, 0.0f);
+                pellet.GetComponent<BulletScript>().setDamage(15.0f);
+                pellet.GetComponent<BulletScript>().direction = rotatedVector;
+                pellet.GetComponent<BulletScript>().speed = 16.0f + Random.Range(1,5);
             }
         }
     }
