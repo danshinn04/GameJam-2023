@@ -747,8 +747,8 @@ MonoBehaviour:
   rb: {fileID: 920441899}
   healthText: {fileID: 1263644138}
   anim: {fileID: 920441901}
-  currGunText: {fileID: 2074850999}
-  currGunImage: {fileID: 1923262350}
+  currGunText: {fileID: 2074850997}
+  currGunImage: {fileID: 1923262348}
   pistolSprite: {fileID: 1510449707, guid: 12eddd37bec80ab4ca2f4074f06cb812, type: 3}
   autoSprite: {fileID: -441228741, guid: 12eddd37bec80ab4ca2f4074f06cb812, type: 3}
   shotgunSprite: {fileID: 1363188343, guid: 12eddd37bec80ab4ca2f4074f06cb812, type: 3}
@@ -1769,7 +1769,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 4.026}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 370, y: 217}
+  m_AnchoredPosition: {x: 370, y: -250}
   m_SizeDelta: {x: 720.6973, y: 360.3487}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1923262350
@@ -2067,7 +2067,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 10.127}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 350, y: 116}
+  m_AnchoredPosition: {x: 350, y: -200}
   m_SizeDelta: {x: 548.0338, y: 74.78461}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2074850999

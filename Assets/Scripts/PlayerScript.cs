@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 using TMPro;
@@ -27,8 +28,8 @@ public class PlayerScript : MonoBehaviour
     private static readonly int MouseHeldDown = Animator.StringToHash("MouseHeldDown");
     private static readonly int MouseClicked = Animator.StringToHash("MouseClicked");
 
-    public TMP_Text currGunText;
-    public Image currGunImage;
+    public GameObject currGunText;
+    public GameObject currGunImage;
     
     public Sprite pistolSprite;
     public Sprite autoSprite;
@@ -123,13 +124,48 @@ public class PlayerScript : MonoBehaviour
         return health;
     }
 
+    private IEnumerator AnimateCurrGun(string gunName, Sprite sprite)
+    {
+        currGunText.GetComponent<TMP_Text>().text = gunName;
+        currGunImage.GetComponent<Image>().sprite = sprite;
+
+        var xText = currGunText.GetComponent<RectTransform>().anchoredPosition.x;
+        var xImage = currGunImage.GetComponent<RectTransform>().anchoredPosition.x;
+        
+        var initText = new Vector2(xText, -200);
+        var initImage = new Vector2(xImage, -250);
+        
+        var finText = new Vector2(xText, 116);
+        var finImage = new Vector2(xImage, 217);
+
+        var elapsed = 0f;
+
+        while (elapsed < 0.5f)
+        {
+            elapsed += Time.deltaTime;
+            
+            var ratio = easeOutExpo(elapsed / 0.5f);
+            currGunText.GetComponent<RectTransform>().anchoredPosition = Vector2.Lerp(initText, finText, ratio);
+            currGunImage.GetComponent<RectTransform>().anchoredPosition = Vector2.Lerp(initImage, finImage, ratio);
+            
+            yield return null;
+        }
+    }
+
+    private float easeOutExpo(float num)
+    {
+        return num >= 1 ? 1 : (float) (1 - Math.Pow(2, -10 * num));
+    }
+
     private void Start()
     {
         healthText.text = "HP " + health;
-        currGunText.text = "Pistol";
-        currGunImage.sprite = pistolSprite;
+        currGunText.GetComponent<TMP_Text>().text = "Pistol";
+        currGunImage.GetComponent<Image>().sprite = pistolSprite;
 
         ogColor = GetComponent<SpriteRenderer>().color;
+        
+        StartCoroutine(AnimateCurrGun("Pistol", pistolSprite));
     }
 
     private void Update()
@@ -160,24 +196,33 @@ public class PlayerScript : MonoBehaviour
 
         if (Input.GetKey(KeyCode.Alpha1))
         {
-            _gun = Gun.Pistol;
-            anim.SetInteger(CurrGun, 0);
-            currGunText.text = "Pistol";
-            currGunImage.sprite = pistolSprite;
+            if (_gun != Gun.Pistol)
+            {
+                _gun = Gun.Pistol;
+                anim.SetInteger(CurrGun, 0);
+                StopAllCoroutines();
+                StartCoroutine(AnimateCurrGun("Pistol", pistolSprite));
+            }
         }
         if (Input.GetKey(KeyCode.Alpha2))
         {
-            _gun = Gun.Automatic;
-            anim.SetInteger(CurrGun, 1);
-            currGunText.text = "Assault Rifle";
-            currGunImage.sprite = autoSprite;
+            if (_gun != Gun.Automatic)
+            {
+                _gun = Gun.Automatic;
+                anim.SetInteger(CurrGun, 1);
+                StopAllCoroutines();
+                StartCoroutine(AnimateCurrGun("Assault Rifle", autoSprite));
+            }
         }
         if (Input.GetKey(KeyCode.Alpha3))
         {
-            _gun = Gun.Shotgun;
-            anim.SetInteger(CurrGun, 2);
-            currGunText.text = "Shotgun";
-            currGunImage.sprite = shotgunSprite;
+            if (_gun != Gun.Shotgun)
+            {
+                _gun = Gun.Shotgun;
+                anim.SetInteger(CurrGun, 2);
+                StopAllCoroutines();
+                StartCoroutine(AnimateCurrGun("Shotgun", shotgunSprite));
+            }
         }
 
         RotatePlayer();
