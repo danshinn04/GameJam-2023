@@ -91,11 +91,11 @@ public class PlayerScript : MonoBehaviour
             Vector2 rotatedVector = Quaternion.Euler(0, 0, angle) * _cVector;
             rotatedVector.Normalize();
 
-            var pellet = Instantiate(bullet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
-            pellet.transform.localScale = new Vector3(0.175f, 0.175f, 0.0f);
-            pellet.GetComponent<BulletScript>().setDamage(15.0f);
-            pellet.GetComponent<BulletScript>().direction = rotatedVector;
-            pellet.GetComponent<BulletScript>().speed = 16.0f + Random.Range(1,5);
+            var projectile = Instantiate(pellet, transform.position + (0.5f * _cVector.normalized), transform.rotation);
+            projectile.transform.localScale = new Vector3(0.175f, 0.175f, 0.0f);
+            projectile.GetComponent<BulletScript>().setDamage(15.0f);
+            projectile.GetComponent<BulletScript>().direction = rotatedVector;
+            projectile.GetComponent<BulletScript>().speed = 16.0f + Random.Range(1,5);
         }
     }
     

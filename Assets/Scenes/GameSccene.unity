@@ -736,7 +736,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 4339274386121854190, guid: 1139cd71a29844240ac57e007c0654fa, type: 3}
-  pellet: {fileID: 0}
+  pellet: {fileID: 4339274386121854190, guid: cb83eaa72eea9574289b62a4556a69e8, type: 3}
   rb: {fileID: 920441899}
   healthText: {fileID: 1263644138}
   anim: {fileID: 920441901}
