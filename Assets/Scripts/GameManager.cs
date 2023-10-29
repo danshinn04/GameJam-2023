@@ -1,5 +1,4 @@
-using System;
-using System.Collections;
+//using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -16,6 +15,7 @@ public class GameManager : MonoBehaviour
     private Vector2Int start = new Vector2Int(1, 1);
     private Vector2Int end = new Vector2Int(3, 3);
     private List<Vector2Int> solutionPath;
+    private List<int> exits = new List<int>();
 
     private int[][] currentMap;
 
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
         return rounds;
     }
 
-    private static int[][] a1 = {
+    private int[][] a1 = {
         new int[] {1,1,1,1,1},
         new int[] {1,0,1,0,1},
         new int[] {1,0,1,0,1},
@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
         new int[] {1,1,1,1,1}
     };
 
-    private static int[][] a2 = {
+    private int[][] a2 = {
         new int[] {1,1,1,1,1},
         new int[] {1,0,0,0,1},
         new int[] {1,0,1,1,1},
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
         new int[] {1,1,1,1,1}
     };
 
-    private static int[][] a3 = {
+    private int[][] a3 = {
         new int[] {1,1,1,1,1},
         new int[] {1,0,0,0,1},
         new int[] {1,0,1,0,1},
@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
         new int[] {1,1,1,1,1}
     };
 
-    private static int[][] a4 = {
+    private int[][] a4 = {
         new int[] {1,1,1,1,1},
         new int[] {1,0,0,0,1},
         new int[] {1,1,1,0,1},
@@ -56,28 +56,50 @@ public class GameManager : MonoBehaviour
         new int[] {1,1,1,1,1}
     };
 
-    public static Tuple<List<int[]>, List<int>> RandomMapGeneration(int size)
+    int[][] RandomMapGeneration(int size)
     {
         List<int[][]> maps = new List<int[][]> { a1, a2, a3, a4 };
         List<int> exits = new List<int>();
 
-        int[][] L1 = maps[new Random().Next(maps.Count)];
-        for (int i = 0; i < size - 1; i++)
-            L1 = AppendXGeneration(new List<int[]>(L1), new List<int[]>(maps[new Random().Next(maps.Count)])).ToArray();
-
-        List<int[]> final_map = new List<int[]>(L1);
-        for (int i = 0; i < size - 1; i++)
-        {
-            int[][] L2 = maps[new Random().Next(maps.Count)];
-            for (int j = 0; j < size - 1; j++)
-                L2 = AppendXGeneration(new List<int[]>(L2), new List<int[]>(maps[new Random().Next(maps.Count)])).ToArray();
-
-            Tuple<int, List<int[]>> result = AppendYGeneration(final_map, new List<int[]>(L2));
-            exits.Add(result.Item1);
-            final_map = result.Item2;
+        int[][] matL1 = maps[Random.Range(0, maps.Count)];
+        List<List<int>> L1 = new List<List<int>>();
+        for(int i=0; i<matL1.Length; i++) {
+            L1.Add(new List<int>(matL1[i]));
         }
 
-        return new Tuple<List<int[]>, List<int>>(final_map, exits);
+        for (int i = 0; i < size; i++) {
+            L1 = AppendXGeneration(L1, maps[Random.Range(0, maps.Count)]);
+        }
+
+        List<List<int>> finalList = L1;
+        
+        for (int i = 0; i < size - 1; i++)
+        {
+            int[][] matL2 = maps[Random.Range(0, maps.Count)];
+            List<List<int>> L2 = new List<List<int>>();
+            for (int j = 0; j < matL2.Length; j++) {
+                L2.Add(new List<int>(matL2[j]));
+            }
+            for (int j = 0; j < size - 1; j++) {
+                L2 = AppendXGeneration(L2, maps[Random.Range(0, maps.Count)]);
+            }
+            finalList = AppendYGeneration(finalList, L2);
+        }
+
+        int n = finalList.Count;
+        int m = finalList[0].Count;
+
+        int[][] finalMap = new int[n][];
+        for(int i=0; i<n; i++) {
+            finalMap[i] = new int[m];
+            for(int j=0; j<m; j++) {
+                //Debug.Log("i" + "," + "j");
+                finalMap[i][j] = finalList[i][j];
+            }
+            Debug.Log(L1[i].Count);
+        }
+        
+        return finalMap;
     }
 
     private void MapToTile()
@@ -106,11 +128,10 @@ public class GameManager : MonoBehaviour
         Debug.Log("Round " + rounds);
 
         // Generate a random map of size 5x5 (or any other size)
-        Tuple<List<int[]>, List<int>> result = RandomMapGeneration(5);
-        currentMap = result.Item1.ToArray();
+        //Tuple<List<int[]>, List<int>> result = RandomMapGeneration(5);
+        //currentMap = result.Item1.ToArray();
 
-        tilemap.ClearAllTiles();
-        MapToTile();
+        
 
         for (int i = 0; i < rounds; i++)
         {
@@ -123,6 +144,9 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         generateRound();
+        currentMap = RandomMapGeneration(3);
+        tilemap.ClearAllTiles();
+        MapToTile();
     }
 
     void Update()
@@ -135,33 +159,42 @@ public class GameManager : MonoBehaviour
         generateRound();
     }
 
-    List<int[]> AppendXGeneration(List<int[]> arrlist1, List<int[]> arrlist2)
+    public List<List<int>> AppendXGeneration(List<List<int>> arrlist1, int[][] arrlist2)
     {
-        List<int[]> newList = new List<int[]>();
-        int Thiccy = new Random().Next(1, 3) == 1 ? 3 : 1;
+        List<List<int>> newList = new List<List<int>>();
+        int Thiccy = Random.Range(0, 2) == 1 ? 3 : 1;
+
         for (int idx = 0; idx < arrlist1.Count; idx++)
         {
-            int[] newRow = arrlist1[idx].Take(arrlist1[idx].Length - 1).ToArray();
-            newRow = newRow.Concat(arrlist2[idx]).ToArray();
-            if (idx == Thiccy)
-            {
-                newRow[newRow.Length - arrlist2[idx].Length] = 0;
+            List<int> newRow = arrlist1[idx];
+            for(int i = 1; i < arrlist2[0].Length; i++)  {
+                newRow.Add(arrlist2[idx][i]);
             }
+            //if (idx == Thiccy)
+            //{
+                //newRow[arrlist1[0].Count] = 0;
+            //}
             newList.Add(newRow);
         }
         return newList;
     }
 
-    Tuple<int, List<int[]>> AppendYGeneration(List<int[]> arrlist1, List<int[]> arrlist2)
-    {
-        int lenofarr1 = arrlist1[0].Length;
+    public List<List<int>> AppendYGeneration(List<List<int>> arrList1, List<List<int>> arrList2) {
+        int lenofarr1 = arrList1[0].Count;
         int p = lenofarr1 / 2;
-        int[] a = arrlist1[arrlist1.Count - 1].ToArray();
-        int ran = new Random().Next(1, p) * 2 - 1;
-        a[ran] = 0;
-        List<int[]> arrr = new List<int[]>(arrlist1.Take(arrlist1.Count - 1));
-        arrr.Add(a);
-        arrr.AddRange(arrlist2.Skip(1));
-        return new Tuple<int, List<int[]>>(ran, arrr);
+        int ran = Random.Range(1, p) * 2 - 1;
+
+        List<int> a = arrList1[arrList1.Count - 1];
+        //a[ran] = 0;
+
+        List<List<int>> newMap = arrList1.GetRange(0, arrList1.Count - 1);
+        newMap.Add(a);
+        newMap.AddRange(arrList2.GetRange(1, arrList2.Count - 1));
+
+        exits.Add(ran);
+
+        Debug.Log(newMap.Count);
+
+        return newMap;
     }
 }

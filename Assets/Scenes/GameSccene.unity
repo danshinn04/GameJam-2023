@@ -347,6 +347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bullet: {fileID: 4339274386121854190, guid: 1139cd71a29844240ac57e007c0654fa, type: 3}
+  pellet: {fileID: 4339274386121854190, guid: 6acc1f154ad6e5445b9aed9d4ef58c48, type: 3}
   rb: {fileID: 920441899}
   anim: {fileID: 920441901}
 --- !u!212 &920441896
