@@ -234,7 +234,6 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        Debug.Log("Hey there");
         if (_player == null)
         {
             Destroy(gameObject);
