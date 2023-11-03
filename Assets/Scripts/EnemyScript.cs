@@ -39,13 +39,35 @@ public class EnemyScript : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _player = GameObject.Find("Player");
-        _ogColor = GetComponent<SpriteRenderer>().color;
+        SetOGColor();
     }
 
     public void TakeDamage(float damage) {
         _health -= damage;
         _hitDamage = 0.1f;
         audioSource.PlayOneShot(hit, 0.4f);
+    }
+
+    public void SetOGColor() {
+        _ogColor = GetComponent<SpriteRenderer>().color;
+    }
+
+    public void HurtSeqeunce() {
+        GetComponent<SpriteRenderer>().color = _ogColor;
+        if(_hitDamage != 0.0f) {
+            _hitDamage = Mathf.Max(0.0f, _hitDamage - Time.deltaTime);
+
+            Color dmg = Color.Lerp(_ogColor, Color.red, _hitDamage / 0.1f);
+            GetComponent<SpriteRenderer>().color = dmg;
+        }
+    }
+
+    public bool isDead() {
+        return _health <= 0.0f;
+    }
+
+    public GameObject getPlayer() {
+        return _player;
     }
 
     bool IsValidMove(int[][] maze, int y, int x, HashSet<(int, int)> visited)
@@ -176,23 +198,8 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    private void Update()
-    {
-        if (_player == null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        
-        GetComponent<SpriteRenderer>().color = _ogColor;
-        if(_hitDamage != 0.0f) {
-            _hitDamage = Mathf.Max(0.0f, _hitDamage - Time.deltaTime);
-
-            Color dmg = Color.Lerp(_ogColor, Color.red, _hitDamage / 0.1f);
-            GetComponent<SpriteRenderer>().color = dmg;
-        }
-        if(_health <= 0.0f) {
+    public void CheckDeath() {
+        if(isDead()) {
             if(_deathSequence == 0.0f) {
                 Destroy(GetComponent<Rigidbody2D>());
                 Destroy(GetComponent<CircleCollider2D>());
@@ -222,7 +229,23 @@ public class EnemyScript : MonoBehaviour
 
             return;
         }
+    }
 
+    // Update is called once per frame
+    private void Update()
+    {
+        Debug.Log("Hey there");
+        if (_player == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
+        HurtSeqeunce();
+        CheckDeath();
+        if(isDead()){
+            return;
+        }
         Sentry();
     }
 }

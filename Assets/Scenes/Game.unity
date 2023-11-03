@@ -688,13 +688,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   normalEnemy: {fileID: 2866692601951738476, guid: 9f374b156461ce941a8e398f00c8e94b, type: 3}
+  railGunEnemy: {fileID: 2866692601951738476, guid: 7bc7d063b1c56f148a2c9a4a1b27d6a1, type: 3}
   tilemap: {fileID: 1559399588}
   ruleTile: {fileID: 11400000, guid: 9369691228aa0494a8877087b805f0d9, type: 2}
   bgTilemap: {fileID: 1599791113}
   borderTile: {fileID: 11400000, guid: 9e28a7941ad5bf340bea1ac59464ba81, type: 2}
   lightTile: {fileID: 11400000, guid: 75208a61461e4ac40940b5d313eee5e3, type: 2}
   darkTile: {fileID: 11400000, guid: cc482f8df58638d449c0b902a5fbc276, type: 2}
-  source: {fileID: 682737320}
   bigRoundText: {fileID: 1188164982}
   roundText: {fileID: 816789295}
   enemiesText: {fileID: 2014690370}
@@ -1272,7 +1272,7 @@ GameObject:
   - component: {fileID: 920441902}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1305,7 +1305,6 @@ MonoBehaviour:
   rifleSound: {fileID: 8300000, guid: 43f515794a5018f448f9eb4b72422a12, type: 3}
   shotgunSound: {fileID: 8300000, guid: 98d3a7cc2b97383418e48acfd9c0ac6d, type: 3}
   hitSound: {fileID: 8300000, guid: ae95bbdacdcb0314ca16444e3068beee, type: 3}
-  deathSound: {fileID: 8300000, guid: 40911319c09343a4583ed70445555c53, type: 3}
   overlay: {fileID: 132388980}
 --- !u!212 &920441896
 SpriteRenderer:

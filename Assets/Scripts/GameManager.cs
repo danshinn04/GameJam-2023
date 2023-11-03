@@ -7,6 +7,7 @@ using TMPro;
 public class GameManager : MonoBehaviour
 {
     public GameObject normalEnemy;
+    public GameObject railGunEnemy;
     
     public Tilemap tilemap;
     public TileBase ruleTile;
@@ -250,6 +251,8 @@ public class GameManager : MonoBehaviour
         bgTilemap.ClearAllTiles();
         MapToTile();
 
+        bool debug = true;
+
         for (var i = 0; i < Mathf.Min(20, _roundNum + 2); i++)
         {
             int y = Random.Range(1, CurrentMap.Length - 1);
@@ -264,7 +267,9 @@ public class GameManager : MonoBehaviour
             float ey = (float) y - (CurrentMap.Length / 2.0f);
             float ex = (float) x - (CurrentMap[0].Length / 2.0f);
 
-            var enemy = Instantiate(normalEnemy, new Vector3(ex, ey, 0.0f), Quaternion.identity);
+            var enemy = null as GameObject;
+            
+            enemy = Instantiate(debug && Random.Range(0,2) == 1 ? railGunEnemy : normalEnemy, new Vector3(ex, ey, 0.0f), Quaternion.identity);
             
             EnemyList.Add(enemy);
         }

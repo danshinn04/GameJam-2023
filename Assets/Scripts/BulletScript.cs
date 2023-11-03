@@ -8,6 +8,7 @@ public class BulletScript : MonoBehaviour
     public float speed;
     private float timer;
     private float damage;
+    private bool isEnemyBullet = false;
 
     // Start is called before the first frame update
     void Start()
@@ -20,13 +21,21 @@ public class BulletScript : MonoBehaviour
         damage = dmg;
     }
 
+    public void setIsEnemy(bool val) {
+        isEnemyBullet = val;
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.CompareTag("Wall")) {
             Destroy(gameObject);
         }
-        if(collision.gameObject.CompareTag("Enemy")) {
+        if(collision.gameObject.CompareTag("Enemy") && !isEnemyBullet) {
             collision.gameObject.GetComponent<EnemyScript>().TakeDamage(damage);
+            Destroy(gameObject);
+        }
+        if(collision.gameObject.CompareTag("Player") && isEnemyBullet) {
+            collision.gameObject.GetComponent<PlayerScript>().takeDamage(damage);
             Destroy(gameObject);
         }
     }
