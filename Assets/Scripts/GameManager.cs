@@ -163,6 +163,23 @@ public class GameManager : MonoBehaviour
         return Enumerable.Range(0, mat.GetLength(1)).Select(idx => mat[rowNum, idx]).ToList();
     }
 
+    private static int[,] RotateMatrixClockwise(int[,] originalMatrix)
+{
+    int totalRows = originalMatrix.GetLength(0);
+    int totalCols = originalMatrix.GetLength(1);
+    int[,] rotatedMatrix = new int[totalCols, totalRows];
+
+    for (int i = 0; i < totalRows; i++)
+    {
+        for (int j = 0; j < totalCols; j++)
+        {
+            rotatedMatrix[j, totalRows - i - 1] = originalMatrix[i, j];
+        }
+    }
+
+    return rotatedMatrix;
+}
+
     private static List<List<int>> GenerateMapRow(int size)
     {
         var mapRow = new List<List<int>>();
@@ -175,7 +192,14 @@ public class GameManager : MonoBehaviour
 
         for (var i = 0; i < size - 1; i++)
         {
+            var rotationcount = Random.Range(0,4);
             var randCell = CellsList[Random.Range(0, CellsList.Count)];
+            for (var j = 0; j < rotationcount; j++)
+            {
+                randCell = RotateMatrixClockwise(randCell);
+            }
+
+            
 
             // 0 for top, 1 for below
             var rand = Random.Range(0, 3);
