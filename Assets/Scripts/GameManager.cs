@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public GameObject normalEnemy;
     public GameObject railGunEnemy;
-    
+    public GameObject player;
     public Tilemap tilemap;
     public TileBase ruleTile;
 
