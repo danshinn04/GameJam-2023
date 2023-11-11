@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public TileBase borderTile;
     public TileBase lightTile;
     public TileBase darkTile;
+
+    private List<GameObject> shadowCasters = new List<GameObject>();
+    public GameObject ShadowCasterPrefab;
     
     public static List<GameObject> EnemyList = new();
     public static int[][] CurrentMap;
@@ -347,6 +350,24 @@ public class GameManager : MonoBehaviour
         bgTilemap.SetTile(pos, borderTile);
     }
 
+    private void GenerateTilemapShadowCasters() { 
+        for(int i = 0; i < shadowCasters.Count; i++) {
+            Destroy(shadowCasters[i]);
+        }
+
+        GameObject shadowCastersContainer = GameObject.Find("ShadowCasters");
+
+        for(int i = 0; i < CurrentMap.Length; i++) {
+            for(int j = 0; j < CurrentMap[0].Length; j++) {
+                if(CurrentMap[i][j] == 1) {
+                    GameObject ShadowCasterOBJ = Instantiate(ShadowCasterPrefab, new Vector3(j - (CurrentMap[0].Length / 2.0f), 
+                                                             i - (CurrentMap.Length / 2.0f), 0.0f), Quaternion.identity, shadowCastersContainer.transform);
+                    shadowCasters.Add(ShadowCasterOBJ);
+                }
+            }
+        }
+    }
+
     private void GenerateRound()
     {
         roundText.text = "Round " + _roundNum;
@@ -356,6 +377,7 @@ public class GameManager : MonoBehaviour
         tilemap.ClearAllTiles();
         bgTilemap.ClearAllTiles();
         MapToTile();
+        GenerateTilemapShadowCasters();
 
         bool debug = true;
 

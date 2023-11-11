@@ -17,7 +17,6 @@ public class RailgunScript : EnemyScript
     private bool fired = false;
 
     // hitDamage
-    private float hitDamage = 0.0f;
     private float attention = 0.0f;
     private float fireTime = 0.0f;
 
@@ -26,6 +25,7 @@ public class RailgunScript : EnemyScript
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
+        SetShadowLight();
         SetOGColor();
         origin = transform.position;
     }
@@ -43,7 +43,7 @@ public class RailgunScript : EnemyScript
     }
 
     // Update is called once per frame
-    new void Update()
+    private void Update()
     {
         HurtSeqeunce();
         CheckDeath();
