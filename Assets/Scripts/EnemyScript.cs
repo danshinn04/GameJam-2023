@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -8,6 +9,7 @@ public class EnemyScript : MonoBehaviour
     private Vector3 _goal;
     private Rigidbody2D _rb;
     private GameObject _player;
+    private UnityEngine.Rendering.Universal.Light2D _shadowLight;
     private Color _ogColor;
 
     private float _health = 100.0f;
@@ -32,13 +34,16 @@ public class EnemyScript : MonoBehaviour
     public AudioClip beep;
     public AudioClip hit;
     public AudioClip boom;
-    
+
+    // coroutines
+    private IEnumerator lightCoroutine;
 
     // Start is called before the first frame update
     void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
         _player = GameObject.Find("Player");
+        SetShadowLight();
         SetOGColor();
     }
 
@@ -46,6 +51,10 @@ public class EnemyScript : MonoBehaviour
         _health -= damage;
         _hitDamage = 0.1f;
         audioSource.PlayOneShot(hit, 0.4f);
+    }
+
+    public void SetShadowLight() {
+        _shadowLight = this.transform.Find("ShadowCastLight").GetComponent<UnityEngine.Rendering.Universal.Light2D>();
     }
 
     public void SetOGColor() {
@@ -198,35 +207,39 @@ public class EnemyScript : MonoBehaviour
         }
     }
 
+    private IEnumerator FadeLight(float waitTime) {
+        float t = 0.0f;
+        float tColor = 0.4f;
+        
+        Destroy(GetComponent<Rigidbody2D>());
+        Destroy(GetComponent<CircleCollider2D>());
+        GameManager.EnemyList.Remove(gameObject);
+        audioSource.PlayOneShot(boom, 0.2f);
+
+        while(t < waitTime) {
+            GetComponent<SpriteRenderer>().color = new Color(tColor, tColor, tColor, tColor);
+            float amt = 1.0f - tColor;
+            transform.localScale += new Vector3(amt * 0.05f, amt * 0.05f, 1.0f);
+
+            t += Time.deltaTime;
+            tColor -= Time.deltaTime;
+
+            _shadowLight.intensity = Mathf.Lerp(1.0f, 0.0f, t / waitTime);
+
+            yield return null;
+        }
+        transform.localScale = new Vector3(0, 0, 0);
+        yield return new WaitForSeconds(0.4f);
+
+        Destroy(gameObject);
+    }
+
     public void CheckDeath() {
         if(isDead()) {
-            if(_deathSequence == 0.0f) {
-                Destroy(GetComponent<Rigidbody2D>());
-                Destroy(GetComponent<CircleCollider2D>());
-                GameManager.EnemyList.Remove(gameObject);
-                _deathSequence = 0.4f;
-                audioSource.PlayOneShot(boom, 0.2f);
+            if(lightCoroutine == null) {
+                lightCoroutine = FadeLight(0.5f);
+                StartCoroutine(lightCoroutine);
             }
-            switch (_deathSequence)
-            {
-                case > 0.0f:
-                {
-                    GetComponent<SpriteRenderer>().color = new Color(_deathSequence, _deathSequence, _deathSequence, _deathSequence);
-                    var amt = 1.0f - _deathSequence;
-                    transform.localScale += new Vector3(amt * 0.05f, amt * 0.05f, 1.0f);
-                    break;
-                }
-                case <= 0.0f:
-                    transform.localScale = new Vector3(0, 0, 0);
-                    break;
-            }
-
-            _deathSequence -= Time.deltaTime;
-            
-            if(_deathSequence <= -1.5f) {
-                Destroy(gameObject);
-            }
-
             return;
         }
     }
@@ -234,7 +247,6 @@ public class EnemyScript : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        Debug.Log("Hey there");
         if (_player == null)
         {
             Destroy(gameObject);
