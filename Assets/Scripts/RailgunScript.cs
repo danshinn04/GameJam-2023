@@ -25,6 +25,7 @@ public class RailgunScript : EnemyScript
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.Find("Player");
+        SetShadowLight();
         SetOGColor();
         origin = transform.position;
     }
